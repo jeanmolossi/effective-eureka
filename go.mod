@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/labstack/echo/v4 v4.7.2
+	github.com/sirupsen/logrus v1.8.1
 	github.com/swaggo/echo-swagger v1.3.3
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/swag v1.8.3
