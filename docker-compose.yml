@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    api_client:
+        container_name: api_client
+        build: .
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/usr/go
+        env_file:
+            - .env.development.local
+        command:
+            - sh
+            - -c
+            - |
+                reflex -r '\.go$$' -s -- sh -c "go run ."
+    api_docs:
+        container_name: api_docs
+        build: .
+        ports:
+            - "6060:6060"
+        volumes:
+          - .:/usr/go
+        command:
+            - sh
+            - -c
+            - |
+                godoc -http=:6060
