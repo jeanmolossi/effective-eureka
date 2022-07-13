@@ -10,29 +10,43 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Logger is a interface who provides methods to manage logs.
 type Logger interface {
+	// log.FieldLogger composes Logger with log.FieldLogger from logrus
 	log.FieldLogger
 }
 
+// logger is a struct who implements Logger interface.
 type logger struct {
 	log.FieldLogger
 }
 
+// NewLogger returns a new instance of Logger.
 func NewLogger() Logger {
+	// set up new logger from logrus
 	logg := log.New()
 
+	// set formatter as JSONFormatter for production environment
+	// while in another env use TextFormatter to more clean logs to read
+	// and debug
 	if os.Getenv("ENVIRONMENT") == "production" {
 		logg.SetFormatter(&log.JSONFormatter{})
 	} else {
 		logg.SetFormatter(&log.TextFormatter{})
 	}
 
+	// set up log entry from logg instance
 	entry := log.NewEntry(logg)
+	// initiate index to easy send in elastic opensearch index
+	// with log sender lambda in AWS
 	entry = entry.WithFields(log.Fields{
 		"index": "effective-eureka",
 	})
 
+	// return new instance of logger with inner entry
 	return &logger{
+		// inner entry provides a better way to log with additional
+		// fields from logrus
 		entry,
 	}
 }
