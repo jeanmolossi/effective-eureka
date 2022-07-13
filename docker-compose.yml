@@ -26,4 +26,4 @@ services:
             - sh
             - -c
             - |
-                godoc -http=:6060
+                reflex -r '\.go$$' -s -- sh -c "godoc -http=:6060"
