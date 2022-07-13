@@ -5,6 +5,7 @@ import (
 	_ "github.com/swaggo/files"
 
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,12 +27,15 @@ import (
 func RunServer() {
 	e := echo.New()
 
-	e.Use(middleware.Logger())
+	// Middlewares
 	e.Use(middleware.RequestID())
+	e.Use(logger.Middleware())
 
+	// Routes
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/ping", Ping)
 
+	// Start server
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
