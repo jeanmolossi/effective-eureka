@@ -16,6 +16,4 @@ RUN go build -o catalog
 
 EXPOSE 8080
 
-RUN ls -la
-
 CMD [ "./catalog" ]
