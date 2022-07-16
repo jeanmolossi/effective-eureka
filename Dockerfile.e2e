@@ -12,6 +12,5 @@ RUN go install github.com/cucumber/godog/cmd/godog@latest
 
 RUN swag init
 RUN go mod tidy
-RUN go build -o catalog
 
 CMD [ "godog", "run", "./features/." ]
