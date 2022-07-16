@@ -6,12 +6,12 @@ if [ ! -e ".env.test.local" ]; then
 fi
 
 for CONTAINER in $HELPERS; do
-	RUN=$(docker-compose -f docker-compose.e2e.yml up -d --build $CONTAINER)
+	docker-compose -f docker-compose.e2e.yml up -d --build $CONTAINER
 done
 
 docker-compose -f docker-compose.e2e.yml up --build e2e_api_test_runner
 EXIT_CODE=$(docker inspect -f '{{.State.ExitCode}}' e2e_api_test_runner)
 
-DOWN=$(docker-compose -f docker-compose.e2e.yml down)
+docker-compose -f docker-compose.e2e.yml down
 
 exit $EXIT_CODE
