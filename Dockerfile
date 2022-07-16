@@ -10,6 +10,7 @@ RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go install github.com/cespare/reflex@latest
 RUN go install golang.org/x/tools/cmd/godoc@latest
 
+RUN swag init
 RUN go mod tidy
 RUN go build -o catalog
 
