@@ -34,4 +34,4 @@ test:
 .PHONY: e2e-test
 e2e-test:
 	@./local-scripts/integration-tests;\
-	exit $?;
+	exit $$?;
