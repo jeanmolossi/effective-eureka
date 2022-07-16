@@ -7,6 +7,15 @@ on:
         branches: [ "main" ]
 
 jobs:
+    e2e-test:
+        runs-on: ubuntu-22.04
+
+        steps:
+        - uses: actions/checkout@v3
+
+        - name: e2e-test
+          run: make e2e-test
+
     test:
         runs-on: ubuntu-22.04
 
@@ -30,11 +39,4 @@ jobs:
         - name: unit
           run: make test
 
-    e2e-test:
-        runs-on: ubuntu-22.04
 
-        steps:
-        - uses: actions/checkout@v3
-
-        - name: e2e-test
-          run: make e2e-test
