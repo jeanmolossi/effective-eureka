@@ -19,8 +19,6 @@ services:
         build:
             context: .
             dockerfile: Dockerfile.e2e
-        volumes:
-            - .:/src/go
         env_file:
             - .env.test.local
         networks:
