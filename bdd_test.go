@@ -97,7 +97,7 @@ func (a *apiFeature) theResponseMatchJSON(body *godog.DocString) (err error) {
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	api := &apiFeature{
-		baseURL: os.Getenv("MOCK_SERVER"),
+		baseURL: os.Getenv("API_HOST"),
 	}
 
 	ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
