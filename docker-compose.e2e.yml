@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+    e2e_api_client:
+        container_name: e2e_api_client
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/src/go
+        command: go run .
+        env_file:
+            - .env.test.local
+        networks:
+            - e2e-net
+
+    e2e_api_test_runner:
+        container_name: e2e_api_test_runner
+        build:
+            context: .
+            dockerfile: Dockerfile.e2e
+        volumes:
+            - .:/src/go
+        env_file:
+            - .env.test.local
+        networks:
+            - e2e-net
+networks:
+    e2e-net:
+        driver: bridge

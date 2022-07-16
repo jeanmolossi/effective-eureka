@@ -30,3 +30,8 @@ test:
 	cd $(CODE_PATH) && ENVIRONMENT=testing $(GOTEST) -coverprofile=./tests/coverage-report.out ./...
 	cd $(CODE_PATH) && $(GOCOVER) -func=./tests/coverage-report.out
 	cd $(CODE_PATH) && $(GOCOVER) -html=./tests/coverage-report.out
+
+.PHONY: e2e-test
+e2e-test:
+	@./local-scripts/integration-tests;\
+	exit $?;

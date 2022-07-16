@@ -7,7 +7,7 @@ services:
         ports:
             - "8080:8080"
         volumes:
-            - .:/usr/go
+            - .:/src/go
         env_file:
             - .env.development.local
         command:
@@ -21,7 +21,7 @@ services:
         ports:
             - "6060:6060"
         volumes:
-          - .:/usr/go
+          - .:/src/go
         command:
             - sh
             - -c

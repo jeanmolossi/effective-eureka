@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"net/http"
+
 	_ "github.com/jeanmolossi/effective-eureka/docs"
 	_ "github.com/swaggo/files"
 
@@ -52,5 +54,9 @@ func RunServer() {
 // @failure 503 {object} httputil.PingInternalServerErr
 // @router /ping [get]
 func Ping(c echo.Context) error {
-	return c.JSON(200, httputil.PingOk{Message: "pong"})
+	if c.Request().Method != "GET" {
+		return c.JSON(http.StatusNotAcceptable, nil)
+	}
+
+	return c.JSON(http.StatusOK, httputil.PingOk{Message: "pong"})
 }
