@@ -9,14 +9,9 @@ fi
 for CONTAINER in $HELPERS; do
 	if [[ "${HOSTNAME}" == "nave-jean" ]]; then
 		docker-compose -f docker-compose.e2e.yml up -d $CONTAINER
-
-		EXITED=$(docker inspect -f '{{.State.ExitCode}}' $CONTAINER)
-		if [ "$EXITED" != "0" ]; then
-			echo "Container $CONTAINER exited with code $EXITED"
-			exit 1
-		fi
 	else
 		docker-compose -f docker-compose.e2e.yml up -d --build --force-recreate $CONTAINER
+		docker-compose -f docker-compose.e2e.yml exec $CONTAINER bash -c "ls -la && ls -la ./docs"
 	fi
 done
 
