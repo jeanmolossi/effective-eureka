@@ -3,9 +3,6 @@ package cmd
 import (
 	"net/http"
 
-	_ "github.com/jeanmolossi/effective-eureka/docs"
-	_ "github.com/swaggo/files"
-
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 
@@ -13,6 +10,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	echoSwagger "github.com/swaggo/echo-swagger"
+
+	_ "github.com/jeanmolossi/effective-eureka/docs"
+	_ "github.com/swaggo/files"
 )
 
 // @title			Effective Eureka API
