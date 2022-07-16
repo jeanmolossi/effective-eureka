@@ -21,6 +21,8 @@ services:
             dockerfile: Dockerfile.e2e
         env_file:
             - .env.test.local
+        depends_on:
+            - e2e_api_client
         networks:
             - e2e-net
 networks:
