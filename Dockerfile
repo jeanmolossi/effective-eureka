@@ -9,13 +9,11 @@ COPY . .
 ENV CGO_ENABLED=0
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init
+
 RUN go install github.com/cespare/reflex@latest
 RUN go install golang.org/x/tools/cmd/godoc@latest
 
-RUN mkdir -p docs
-RUN echo "package docs" > docs/docs.go
-
-RUN swag init
 RUN go mod tidy
 RUN go build -o catalog
 
