@@ -1,2 +1,5 @@
 docs/
 .env*.local
+
+mocks/*
+!.gitkeep
