@@ -8,10 +8,8 @@ COPY . .
 
 ENV CGO_ENABLED=0
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go install github.com/cucumber/godog/cmd/godog@latest
 
-RUN swag init
 RUN go mod tidy
 RUN go build -o catalog
 
