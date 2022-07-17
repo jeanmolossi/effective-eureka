@@ -41,7 +41,10 @@ func RunServer() {
 	// Routes
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/ping", Ping)
+
+	// Courses
 	e.POST("/course", CreateCourse)
+	e.GET("/course/:courseID", GetCourseByID)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))
@@ -67,6 +70,7 @@ func Ping(c echo.Context) error {
 	return c.JSON(http.StatusOK, httputil.PingOk{Message: "pong"})
 }
 
+// CreateCourse is a endpoint to create a course.
 // @Summary Course creation
 // @tags courses
 // @description Create a course
@@ -86,4 +90,27 @@ func CreateCourse(c echo.Context) error {
 	}
 
 	return h.CreateCourse(c)
+}
+
+// GetCourseByID is a endpoint to get a course by ID.
+// @summary Course retrieval
+// @tags courses
+// @description Get a course by ID
+// @accept json
+// @produce json
+// @param courseID path string true "Course ID"
+// @success 200 {object} coursesHandler.HttpCourseOk
+// @failure 400 {object} coursesHandler.HttpCourseByIDBadRequestErr
+// @failure 404 {object} coursesHandler.HttpCourseNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /course/:courseID [get]
+func GetCourseByID(c echo.Context) error {
+	h, err := coursesHandler.NewHandler()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError,
+			httputil.HttpInternalServerErr{Message: err.Error()},
+		)
+	}
+
+	return h.GetCourseByID(c)
 }

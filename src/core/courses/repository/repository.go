@@ -18,8 +18,17 @@ func NewRepository(db *gorm.DB) domain.CourseRepository {
 	return &repo{db}
 }
 
+// GetByID receives and course ID and query that on properly database and returns
+// the course found or nil and error if not found.
 func (r *repo) GetByID(courseID string) (domain.Course, error) {
-	return nil, fmt.Errorf("not implemented")
+	model := &CourseModel{}
+	result := r.db.Table("courses").Where("course_id = ?", courseID).First(&CourseModel{}).Scan(model)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting course: %v", result.Error)
+	}
+
+	return ModelToDomain(model), nil
 }
 
 func (r *repo) GetByStudentID(studentID string) ([]domain.Course, error) {

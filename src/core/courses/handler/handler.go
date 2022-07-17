@@ -14,7 +14,8 @@ import (
 
 // Handler is a struct to manage courses usecases.
 type Handler struct {
-	createCourse domain.CreateCourse
+	getCourseByID domain.GetCourseByID
+	createCourse  domain.CreateCourse
 }
 
 // NewHandler is a factory method to create a Handler.
@@ -26,9 +27,11 @@ func NewHandler() (*Handler, error) {
 	}
 
 	repo := repository.NewRepository(dbConn.DB())
+	getCourseByID := usecase.NewGetCourseByID(repo)
 	createCourse := usecase.NewCreateCourse(repo)
 
 	return &Handler{
+		getCourseByID,
 		createCourse,
 	}, nil
 }
@@ -64,4 +67,16 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, NewHttpCourseCreated(newCourse))
+}
+
+// GetCourseByID endpoint
+func (h *Handler) GetCourseByID(c echo.Context) error {
+	courseID := c.Param("courseID")
+
+	course, err := h.getCourseByID.Run(courseID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, NewHttpCourseOk(course))
 }

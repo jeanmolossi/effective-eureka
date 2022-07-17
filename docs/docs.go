@@ -62,6 +62,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/course/:courseID": {
+            "get": {
+                "description": "Get a course by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Course retrieval",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseByIDBadRequestErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "A simple health check.",
@@ -105,6 +155,15 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handler.HttpCourseByIDBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Missing course_id param"
+                }
+            }
+        },
         "handler.HttpCourseCreated": {
             "type": "object",
             "properties": {
@@ -115,6 +174,40 @@ const docTemplate = `{
                 "course_published": {
                     "type": "boolean",
                     "example": false
+                }
+            }
+        },
+        "handler.HttpCourseNotFoundErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Course Not Found"
+                }
+            }
+        },
+        "handler.HttpCourseOk": {
+            "type": "object",
+            "properties": {
+                "course_description": {
+                    "type": "string",
+                    "example": "Effective Eureka is a course about Go."
+                },
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "course_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "course_thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
+                },
+                "course_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
                 }
             }
         },

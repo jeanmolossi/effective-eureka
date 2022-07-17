@@ -30,7 +30,9 @@ type Course interface {
 	UnpublishCourse()
 }
 
+// GetCourseByID is a interface who provides methods to get a course by ID.
 type GetCourseByID interface {
+	// Run is the method to get a course by ID.
 	Run(courseID string) (Course, error)
 }
 

@@ -7,10 +7,12 @@ type getCourseByID struct {
 	repo domain.CourseRepository
 }
 
-func NewGetCourseByID() domain.GetCourseByID {
-	return &getCourseByID{}
+// NewGetCourseByID is a factory method to create a usecase to get a course by ID.
+func NewGetCourseByID(repo domain.CourseRepository) domain.GetCourseByID {
+	return &getCourseByID{repo}
 }
 
+// Run is the method to get a course by ID. That implements the usecase.GetCourseByID interface.
 func (g *getCourseByID) Run(courseID string) (domain.Course, error) {
-	return nil, nil
+	return g.repo.GetByID(courseID)
 }
