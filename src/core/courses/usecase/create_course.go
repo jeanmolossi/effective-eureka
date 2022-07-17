@@ -2,6 +2,7 @@ package usecase
 
 import "github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
 
+// createCourse implements domain.CreateCourse interface from courses module.
 type createCourse struct {
 	repo domain.CourseRepository
 }
@@ -15,6 +16,5 @@ func NewCreateCourse(repo domain.CourseRepository) domain.CreateCourse {
 
 // Run is the method with handles application to create a course.
 func (c *createCourse) Run(course domain.Course) (domain.Course, error) {
-	course.SetCourseID("course-id")
 	return c.repo.Create(course)
 }

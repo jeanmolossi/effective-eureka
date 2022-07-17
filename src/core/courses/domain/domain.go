@@ -1,3 +1,6 @@
+// Package domain is a package to manage the application domain.
+//
+// That package is the course domain.
 package domain
 
 // Course is a interface who provides methods to manage courses.
@@ -53,9 +56,20 @@ type UnpublishCourse interface {
 	Run(courseID string) error
 }
 
+// CourseUpdater is an interface to update a course. It works
+// together with the CourseRepository.Edit method.
+// We can handle all course properties inside that callback function.
+type CourseUpdater func(course Course) (Course, error)
+
+// CourseRepository is the interface to manage courses on database.
+// To persist and handle saved courses we should implement that interface.
 type CourseRepository interface {
+	// GetByID returns a course by ID.
 	GetByID(courseID string) (Course, error)
+	// GetByStudentID returns a list of courses from a student.
 	GetByStudentID(studentID string) ([]Course, error)
+	// Create creates a new course.
 	Create(course Course) (Course, error)
-	Edit(course Course) (Course, error)
+	// EditInfo edits the course info.
+	Edit(courseID string, updater CourseUpdater) (Course, error)
 }
