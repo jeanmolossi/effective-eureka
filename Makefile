@@ -11,6 +11,7 @@ docs:
 .PHONY: run
 run:
 	$(SWAG) init
+	docker-compose up -d api_db
 	docker-compose up -d api_client
 	docker-compose up -d api_docs
 

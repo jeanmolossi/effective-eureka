@@ -15,6 +15,23 @@ services:
             - -c
             - |
                 reflex -r '\.go$$' -s -- sh -c "go run ."
+        networks:
+            - api-net
+
+    api_db:
+        container_name: api_db
+        build: .docker/db
+        ports:
+            - "5432:5432"
+        volumes:
+            - .docker/dbdata:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=courses
+        networks:
+            - api-net
+
     api_docs:
         container_name: api_docs
         build: .
@@ -27,3 +44,7 @@ services:
             - -c
             - |
                 reflex -r '\.go$$' -s -- sh -c "godoc -http=:6060"
+
+networks:
+    api-net:
+        driver: bridge
