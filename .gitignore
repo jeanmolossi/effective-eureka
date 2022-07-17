@@ -1,4 +1,8 @@
+# Environment
 .env*.local
 
+# Tests
+src/tests/*
 
+# Keep
 !.gitkeep
