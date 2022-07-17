@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"reflect"
+	"strings"
 
 	"github.com/cucumber/godog"
 )
@@ -30,6 +31,52 @@ func (a *apiFeature) iRequestTo(method, endpoint string) (err error) {
 	if err != nil {
 		return
 	}
+
+	defer func() {
+		switch t := recover().(type) {
+		case string:
+			err = fmt.Errorf(t)
+		case error:
+			err = t
+		}
+	}()
+
+	ok := func(w http.ResponseWriter, data []byte) {
+		w.Header().Set("Content-Type", "application/json")
+
+		fmt.Fprintf(w, "%s", string(data))
+	}
+
+	httpClient := &http.Client{}
+
+	res, err := httpClient.Do(req)
+	a.resp.WriteHeader(res.StatusCode)
+	if err != nil {
+		fmt.Fprintf(a.resp, "Error: %s", err)
+		return
+	}
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Fprintf(a.resp, "Error: %s", err)
+		return
+	}
+
+	ok(a.resp, data)
+
+	return
+}
+
+func (a *apiFeature) iRequestToWithPayload(method, endpoint string, payload *godog.DocString) (err error) {
+	req, err := http.NewRequest(
+		method,
+		fmt.Sprintf("%s%s", a.baseURL, endpoint),
+		strings.NewReader(payload.Content))
+	if err != nil {
+		return
+	}
+
+	req.Header.Add("Content-Type", "application/json")
 
 	defer func() {
 		switch t := recover().(type) {
@@ -106,6 +153,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	})
 
 	ctx.Step(`^I "(GET|POST|PUT|DELETE)" to "([^"]*)"$`, api.iRequestTo)
+	ctx.Step(`^I "(POST|PUT)" to "([^"]*)" with:$`, api.iRequestToWithPayload)
 	ctx.Step(`^the status code received should be (\d+)$`, api.theStatusCodeShouldBe)
 	ctx.Step(`^the response received should match json:$`, api.theResponseMatchJSON)
 
