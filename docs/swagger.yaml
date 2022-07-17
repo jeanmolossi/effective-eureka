@@ -11,9 +11,53 @@ definitions:
         example: pong
         type: string
     type: object
+  input.CreateCourse:
+    properties:
+      description:
+        example: This is a catalog video manager API.
+        maxLength: 255
+        type: string
+      published:
+        example: true
+        type: boolean
+      thumbnail:
+        example: https://effective-eureka.s3.amazonaws.com/courses/thumbnail/1.jpg
+        type: string
+      title:
+        example: Effective Eureka
+        maxLength: 255
+        type: string
+    required:
+    - title
+    type: object
 info:
   contact: {}
 paths:
+  /courses:
+    post:
+      consumes:
+      - application/json
+      description: Create a course
+      parameters:
+      - description: Course object which will be created
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/input.CreateCourse'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema: {}
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.PingInternalServerErr'
+      summary: Course creation
+      tags:
+      - courses
   /ping:
     get:
       consumes:

@@ -4,6 +4,44 @@
         "contact": {}
     },
     "paths": {
+        "/courses": {
+            "post": {
+                "description": "Create a course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Course creation",
+                "parameters": [
+                    {
+                        "description": "Course object which will be created",
+                        "name": "course",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.CreateCourse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {}
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.PingInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "A simple health check.",
@@ -62,6 +100,32 @@
                 "message": {
                     "type": "string",
                     "example": "pong"
+                }
+            }
+        },
+        "input.CreateCourse": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "This is a catalog video manager API."
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/thumbnail/1.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka"
                 }
             }
         }
