@@ -3,14 +3,25 @@ version: '3'
 services:
     e2e_api_client:
         container_name: e2e_api_client
-        build:
-            context: .
-            dockerfile: Dockerfile
+        build: .
         volumes:
             - .:/src/go
-        command: go run .
+            - .docker/dockerize/dockerize:/src/go/dockerize
+        command: sh -c "./dockerize -wait tcp://e2e_api_db:5432 go run ."
         env_file:
             - .env.test.local
+        networks:
+            - e2e-net
+        depends_on:
+            - e2e_api_db
+
+    e2e_api_db:
+        container_name: e2e_api_db
+        build: .docker/db
+        environment:
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=courses
         networks:
             - e2e-net
 
@@ -19,10 +30,15 @@ services:
         build:
             context: .
             dockerfile: Dockerfile.e2e
+        volumes:
+            - ./features:/src/go/features
+            - .docker/dockerize/dockerize:/src/go/dockerize
+        command: sh -c "./dockerize -wait tcp://e2e_api_db:5432 godog run ./features/."
         env_file:
             - .env.test.local
         depends_on:
             - e2e_api_client
+            - e2e_api_db
         networks:
             - e2e-net
 networks:
