@@ -50,6 +50,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/httputil.PingInternalServerErr"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.PingInternalServerErr"
+                        }
                     }
                 }
             }
