@@ -35,13 +35,13 @@ func (_m *CourseRepository) Create(course domain.Course) (domain.Course, error) 
 	return r0, r1
 }
 
-// Edit provides a mock function with given fields: course
-func (_m *CourseRepository) Edit(course domain.Course) (domain.Course, error) {
-	ret := _m.Called(course)
+// Edit provides a mock function with given fields: courseID, updater
+func (_m *CourseRepository) Edit(courseID string, updater domain.CourseUpdater) (domain.Course, error) {
+	ret := _m.Called(courseID, updater)
 
 	var r0 domain.Course
-	if rf, ok := ret.Get(0).(func(domain.Course) domain.Course); ok {
-		r0 = rf(course)
+	if rf, ok := ret.Get(0).(func(string, domain.CourseUpdater) domain.Course); ok {
+		r0 = rf(courseID, updater)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(domain.Course)
@@ -49,8 +49,8 @@ func (_m *CourseRepository) Edit(course domain.Course) (domain.Course, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(domain.Course) error); ok {
-		r1 = rf(course)
+	if rf, ok := ret.Get(1).(func(string, domain.CourseUpdater) error); ok {
+		r1 = rf(courseID, updater)
 	} else {
 		r1 = ret.Error(1)
 	}
