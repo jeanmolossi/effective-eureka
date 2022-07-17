@@ -6,8 +6,7 @@ services:
         build: .
         volumes:
             - .:/src/go
-            - .docker/dockerize/dockerize:/src/go/dockerize
-        command: sh -c "./dockerize -wait tcp://e2e_api_db:5432 go run ."
+        command: sh -c ".docker/dockerize/dockerize -wait tcp://e2e_api_db:5432 go run ."
         env_file:
             - .env.test.local
         networks:
