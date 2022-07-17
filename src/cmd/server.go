@@ -7,10 +7,10 @@ package cmd
 import (
 	"net/http"
 
+	coursesHandler "github.com/jeanmolossi/effective-eureka/src/core/courses/handler"
 	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
 
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
-	"github.com/jeanmolossi/effective-eureka/src/core/courses"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 
 	"github.com/labstack/echo/v4"
@@ -73,12 +73,12 @@ func Ping(c echo.Context) error {
 // @accept json
 // @produce json
 // @param course body input.CreateCourse true "Course object which will be created"
-// @success 201 {object} domain.Course
-// @failure 400 {object} httputil.PingInternalServerErr
-// @failure 500 {object} httputil.PingInternalServerErr
-// @router /courses [post]
+// @success 201 {object} coursesHandler.HttpCourseCreated
+// @failure 400 {object} coursesHandler.HttpCreateCourseBadRequestErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /course [post]
 func CreateCourse(c echo.Context) error {
-	h, err := courses.NewHandler()
+	h, err := coursesHandler.NewHandler()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			httputil.HttpInternalServerErr{Message: err.Error()},

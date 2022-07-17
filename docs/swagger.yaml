@@ -1,4 +1,29 @@
 definitions:
+  handler.HttpCourseCreated:
+    properties:
+      course_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        type: string
+      course_published:
+        example: false
+        type: boolean
+    type: object
+  handler.HttpCreateCourseBadRequestErr:
+    properties:
+      error:
+        example: Bad Request
+        type: string
+      errors:
+        items:
+          $ref: '#/definitions/shared.FieldError'
+        type: array
+    type: object
+  httputil.HttpInternalServerErr:
+    properties:
+      error:
+        example: internal server error
+        type: string
+    type: object
   httputil.PingInternalServerErr:
     properties:
       message:
@@ -30,10 +55,19 @@ definitions:
     required:
     - title
     type: object
+  shared.FieldError:
+    properties:
+      field:
+        example: title
+        type: string
+      message:
+        example: title is required
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /courses:
+  /course:
     post:
       consumes:
       - application/json
@@ -50,15 +84,16 @@ paths:
       responses:
         "201":
           description: Created
-          schema: {}
+          schema:
+            $ref: '#/definitions/handler.HttpCourseCreated'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.PingInternalServerErr'
+            $ref: '#/definitions/handler.HttpCreateCourseBadRequestErr'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.PingInternalServerErr'
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
       summary: Course creation
       tags:
       - courses

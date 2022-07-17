@@ -9,3 +9,8 @@ type HttpOkWithMessage struct {
 type HttpInternalServerErr struct {
 	Message string `json:"error" example:"internal server error"`
 }
+
+// HttpBadRequestErr returns a error message
+type HttpBadRequestErr struct {
+	Message string `json:"error" example:"bad request"`
+}

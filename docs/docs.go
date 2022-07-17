@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/courses": {
+        "/course": {
             "post": {
                 "description": "Create a course",
                 "consumes": [
@@ -43,18 +43,20 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseCreated"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.PingInternalServerErr"
+                            "$ref": "#/definitions/handler.HttpCreateCourseBadRequestErr"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.PingInternalServerErr"
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
                         }
                     }
                 }
@@ -103,6 +105,43 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handler.HttpCourseCreated": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "course_published": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "handler.HttpCreateCourseBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Bad Request"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/shared.FieldError"
+                    }
+                }
+            }
+        },
+        "httputil.HttpInternalServerErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "internal server error"
+                }
+            }
+        },
         "httputil.PingInternalServerErr": {
             "type": "object",
             "properties": {
@@ -144,6 +183,19 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "example": "Effective Eureka"
+                }
+            }
+        },
+        "shared.FieldError": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string",
+                    "example": "title"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "title is required"
                 }
             }
         }

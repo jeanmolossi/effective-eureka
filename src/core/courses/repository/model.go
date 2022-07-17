@@ -20,7 +20,7 @@ type CourseModel struct {
 
 // BeforeCreate is a hook to set the created_at, updated_at fields and generate
 // uuid random.
-func (c *CourseModel) BeforeCreate(tx *gorm.Tx) error {
+func (c *CourseModel) BeforeCreate(tx *gorm.DB) error {
 	c.CourseID = uuid.NewString()
 	c.CourseCreatedAt = time.Now()
 	c.CourseUpdatedAt = time.Now()
@@ -29,7 +29,7 @@ func (c *CourseModel) BeforeCreate(tx *gorm.Tx) error {
 }
 
 // BeforeUpdate is a hook to set the updated_at field.
-func (c *CourseModel) BeforeUpdate(tx *gorm.Tx) error {
+func (c *CourseModel) BeforeUpdate(tx *gorm.DB) error {
 	c.CourseUpdatedAt = time.Now()
 	return nil
 }

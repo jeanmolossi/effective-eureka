@@ -1,5 +1,5 @@
-// Package courses is a package to manage courses in Go.
-package courses
+// Package handler is a package to manage courses in Go.
+package handler
 
 import (
 	"net/http"
@@ -40,7 +40,7 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 	// Bind input with input struct we expect
 	err := c.Bind(&input)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	// Validate input with input struct we expect
@@ -63,5 +63,5 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusCreated, newCourse)
+	return c.JSON(http.StatusCreated, NewHttpCourseCreated(newCourse))
 }
