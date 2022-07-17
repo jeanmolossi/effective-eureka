@@ -3,6 +3,7 @@ package usecase_test
 import (
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/jeanmolossi/effective-eureka/mocks"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/usecase"
@@ -15,7 +16,12 @@ func TestCreateCourse(t *testing.T) {
 		want := domain.NewCourse("title", "thumb", "desc", false)
 
 		repo := new(mocks.CourseRepository)
-		repo.On("Create", mock.Anything).Return(want, nil)
+		repo.On("Create", mock.Anything).Return(want, nil).Run(
+			func(args mock.Arguments) {
+				course := args.Get(0).(domain.Course)
+				// Fake generated ID
+				course.SetCourseID(uuid.NewString())
+			})
 
 		service := usecase.NewCreateCourse(repo)
 
