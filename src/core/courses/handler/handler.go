@@ -10,6 +10,7 @@ import (
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/usecase"
 	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,6 +19,8 @@ type Handler struct {
 	getCourseByID  domain.GetCourseByID
 	createCourse   domain.CreateCourse
 	editCourseInfo domain.EditCourseInfo
+
+	logger logger.Logger
 }
 
 // NewHandler is a factory method to create a Handler.
@@ -37,6 +40,8 @@ func NewHandler() (*Handler, error) {
 		getCourseByID,
 		createCourse,
 		editCourseInfo,
+
+		logger.NewLogger(),
 	}, nil
 }
 
@@ -57,12 +62,14 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 	// Bind input with input struct we expect
 	err := c.Bind(&input)
 	if err != nil {
+		h.logger.Errorln("Error binding input", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	// Validate input with input struct we expect
 	err = c.Validate(input)
 	if err != nil {
+		h.logger.Errorln("Error validating input", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
@@ -76,6 +83,7 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 
 	newCourse, err := h.createCourse.Run(course.Build())
 	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
@@ -99,6 +107,7 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 
 	course, err := h.getCourseByID.Run(courseID)
 	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
@@ -121,17 +130,20 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 func (h *Handler) EditCourseInfo(c echo.Context) error {
 	courseID := c.Param("courseID")
 	if courseID == "" {
+		h.logger.Errorln("courseID is empty")
 		return c.JSON(http.StatusBadRequest, HttpCourseByIDBadRequestErr{"Missing course_id param"})
 	}
 
 	var input *input.EditCourseInfo
 	err := c.Bind(&input)
 	if err != nil {
+		h.logger.Errorln("Error binding input", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	err = c.Validate(input)
 	if err != nil {
+		h.logger.Errorln("validation error", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
@@ -145,6 +157,7 @@ func (h *Handler) EditCourseInfo(c echo.Context) error {
 
 	updatedCourse, err := h.editCourseInfo.Run(course.Build())
 	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
