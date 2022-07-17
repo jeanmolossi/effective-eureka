@@ -120,6 +120,7 @@ definitions:
     type: object
 info:
   contact: {}
+  termsOfService: github.com/jeanmolossi/effective-eureka/terms/
 paths:
   /course:
     post:
@@ -249,4 +250,7 @@ paths:
       summary: Ping the server.
       tags:
       - healthcheck
+securityDefinitions:
+  BasicAuth:
+    type: basic
 swagger: "2.0"

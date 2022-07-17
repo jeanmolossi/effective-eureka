@@ -1,6 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
+        "termsOfService": "github.com/jeanmolossi/effective-eureka/terms/",
         "contact": {}
     },
     "paths": {
@@ -370,6 +371,11 @@
                     "example": "title is required"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
         }
     }
 }

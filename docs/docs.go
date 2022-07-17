@@ -10,6 +10,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
+        "termsOfService": "github.com/jeanmolossi/effective-eureka/terms/",
         "contact": {},
         "version": "{{.Version}}"
     },
@@ -382,6 +383,11 @@ const docTemplate = `{
                     "example": "title is required"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
         }
     }
 }`
