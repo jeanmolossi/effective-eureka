@@ -15,6 +15,11 @@ run:
 	docker-compose up -d api_client
 	docker-compose up -d api_docs
 
+.PHONY: rebuild_db
+rebuild_db:
+	@./local-scripts/destroy-db-container;\
+	docker-compose up -d api_db
+
 .PHONE: stop
 stop:
 	docker-compose down
