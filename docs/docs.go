@@ -110,6 +110,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "Edit a course basic information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Course edition",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Course object which will be edited",
+                        "name": "course",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.EditCourseInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpEditCourseInfoBadRequestErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
             }
         },
         "/ping": {
@@ -226,6 +283,21 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.HttpEditCourseInfoBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Bad Request"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/shared.FieldError"
+                    }
+                }
+            }
+        },
         "httputil.HttpInternalServerErr": {
             "type": "object",
             "properties": {
@@ -271,6 +343,25 @@ const docTemplate = `{
                 "thumbnail": {
                     "type": "string",
                     "example": "https://effective-eureka.s3.amazonaws.com/courses/thumbnail/1.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "input.EditCourseInfo": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka is a course about effective eureka."
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "example": "https://example.com/thumbnail.png"
                 },
                 "title": {
                     "type": "string",

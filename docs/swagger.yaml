@@ -48,6 +48,16 @@ definitions:
           $ref: '#/definitions/shared.FieldError'
         type: array
     type: object
+  handler.HttpEditCourseInfoBadRequestErr:
+    properties:
+      error:
+        example: Bad Request
+        type: string
+      errors:
+        items:
+          $ref: '#/definitions/shared.FieldError'
+        type: array
+    type: object
   httputil.HttpInternalServerErr:
     properties:
       error:
@@ -84,6 +94,20 @@ definitions:
         type: string
     required:
     - title
+    type: object
+  input.EditCourseInfo:
+    properties:
+      description:
+        example: Effective Eureka is a course about effective eureka.
+        maxLength: 255
+        type: string
+      thumbnail:
+        example: https://example.com/thumbnail.png
+        type: string
+      title:
+        example: Effective Eureka
+        maxLength: 255
+        type: string
     type: object
   shared.FieldError:
     properties:
@@ -158,6 +182,44 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
       summary: Course retrieval
+      tags:
+      - courses
+    put:
+      consumes:
+      - application/json
+      description: Edit a course basic information
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseID
+        required: true
+        type: string
+      - description: Course object which will be edited
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/input.EditCourseInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpCourseOk'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HttpEditCourseInfoBadRequestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.HttpCourseNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      summary: Course edition
       tags:
       - courses
   /ping:
