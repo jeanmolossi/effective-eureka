@@ -6,3 +6,4 @@ src/tests/*
 
 # Keep
 !.gitkeep
+.docker/dbdata/
