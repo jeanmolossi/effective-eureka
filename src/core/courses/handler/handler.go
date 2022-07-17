@@ -14,8 +14,9 @@ import (
 
 // Handler is a struct to manage courses usecases.
 type Handler struct {
-	getCourseByID domain.GetCourseByID
-	createCourse  domain.CreateCourse
+	getCourseByID  domain.GetCourseByID
+	createCourse   domain.CreateCourse
+	editCourseInfo domain.EditCourseInfo
 }
 
 // NewHandler is a factory method to create a Handler.
@@ -29,14 +30,26 @@ func NewHandler() (*Handler, error) {
 	repo := repository.NewRepository(dbConn.DB())
 	getCourseByID := usecase.NewGetCourseByID(repo)
 	createCourse := usecase.NewCreateCourse(repo)
+	editCourseInfo := usecase.NewEditCourseInfo(repo)
 
 	return &Handler{
 		getCourseByID,
 		createCourse,
+		editCourseInfo,
 	}, nil
 }
 
-// Create course endpoint
+// CreateCourse is a endpoint to create a course.
+// @Summary Course creation
+// @tags courses
+// @description Create a course
+// @accept json
+// @produce json
+// @param course body input.CreateCourse true "Course object which will be created"
+// @success 201 {object} HttpCourseCreated
+// @failure 400 {object} HttpCreateCourseBadRequestErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /course [post]
 func (h *Handler) CreateCourse(c echo.Context) error {
 	var input *input.CreateCourse
 
@@ -69,7 +82,18 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 	return c.JSON(http.StatusCreated, NewHttpCourseCreated(newCourse))
 }
 
-// GetCourseByID endpoint
+// GetCourseByID is a endpoint to get a course by ID.
+// @summary Course retrieval
+// @tags courses
+// @description Get a course by ID
+// @accept json
+// @produce json
+// @param courseID path string true "Course ID"
+// @success 200 {object} HttpCourseOk
+// @failure 400 {object} HttpCourseByIDBadRequestErr
+// @failure 404 {object} HttpCourseNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /course/:courseID [get]
 func (h *Handler) GetCourseByID(c echo.Context) error {
 	courseID := c.Param("courseID")
 
@@ -79,4 +103,54 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, NewHttpCourseOk(course))
+}
+
+// EditCourseInfo is a endpoint to edit a course.
+// @Summary Course edition
+// @tags courses
+// @description Edit a course basic information
+// @accept json
+// @produce json
+// @param courseID path string true "Course ID"
+// @param course body input.EditCourseInfo true "Course object which will be edited"
+// @success 200 {object} HttpCourseOk
+// @failure 400 {object} HttpEditCourseInfoBadRequestErr
+// @failure 404 {object} HttpCourseNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /course/:courseID [put]
+func (h *Handler) EditCourseInfo(c echo.Context) error {
+	courseID := c.Param("courseID")
+	if courseID == "" {
+		return c.JSON(http.StatusBadRequest, HttpCourseByIDBadRequestErr{"Missing course_id param"})
+	}
+
+	var input *input.EditCourseInfo
+	err := c.Bind(&input)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	err = c.Validate(input)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	// Create course using domain constructor.
+	// [ ] - Should better use a factory method to create a course.
+	course := domain.NewCourse(
+		input.Title,
+		input.Thumbnail,
+		input.Description,
+		false,
+	)
+	// using a factory it should be possible to create a course without
+	// passing the course ID.
+	course.SetCourseID(courseID)
+
+	updatedCourse, err := h.editCourseInfo.Run(course)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, NewHttpCourseOk(updatedCourse))
 }
