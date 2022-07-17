@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/courses/factory"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/input"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/usecase"
@@ -65,16 +66,15 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	// Create course using domain constructor.
-	// [ ] - Should better use a factory method to create a course.
-	course := domain.NewCourse(
+	// Create course using factory.
+	course := factory.NewCourse().CreateCourse(
 		input.Title,
 		input.Thumbnail,
 		input.Description,
 		input.Published,
 	)
 
-	newCourse, err := h.createCourse.Run(course)
+	newCourse, err := h.createCourse.Run(course.Build())
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -135,19 +135,15 @@ func (h *Handler) EditCourseInfo(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	// Create course using domain constructor.
-	// [ ] - Should better use a factory method to create a course.
-	course := domain.NewCourse(
+	// Create course using factory constructor.
+	course := factory.NewCourse().CreateCourse(
 		input.Title,
 		input.Thumbnail,
 		input.Description,
 		false,
-	)
-	// using a factory it should be possible to create a course without
-	// passing the course ID.
-	course.SetCourseID(courseID)
+	).WithID(courseID)
 
-	updatedCourse, err := h.editCourseInfo.Run(course)
+	updatedCourse, err := h.editCourseInfo.Run(course.Build())
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
