@@ -1,9 +1,16 @@
+// Package cmd is a package to manage the application commands.
+//
+// It documents and handle the server endpoints.
+// Generate the swagger documentation
 package cmd
 
 import (
 	"net/http"
 
+	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
+
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
+	"github.com/jeanmolossi/effective-eureka/src/core/courses"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 
 	"github.com/labstack/echo/v4"
@@ -25,6 +32,7 @@ import (
 // @securityDefinitions.basic  BasicAuth
 func RunServer() {
 	e := echo.New()
+	e.Validator = shared.NewCustomValidator()
 
 	// Middlewares
 	e.Use(middleware.RequestID())
@@ -33,6 +41,7 @@ func RunServer() {
 	// Routes
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/ping", Ping)
+	e.POST("/course", CreateCourse)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))
@@ -56,4 +65,25 @@ func Ping(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, httputil.PingOk{Message: "pong"})
+}
+
+// @Summary Course creation
+// @tags courses
+// @description Create a course
+// @accept json
+// @produce json
+// @param course body input.CreateCourse true "Course object which will be created"
+// @success 201 {object} domain.Course
+// @failure 400 {object} httputil.PingInternalServerErr
+// @failure 500 {object} httputil.PingInternalServerErr
+// @router /courses [post]
+func CreateCourse(c echo.Context) error {
+	h, err := courses.NewHandler()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError,
+			httputil.HttpInternalServerErr{Message: err.Error()},
+		)
+	}
+
+	return h.CreateCourse(c)
 }
