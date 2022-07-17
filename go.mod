@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/cucumber/godog v0.12.5
+	github.com/go-playground/validator/v10 v10.11.0
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/sirupsen/logrus v1.8.1
@@ -11,6 +12,7 @@ require (
 	github.com/swaggo/echo-swagger v1.3.3
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/swag v1.8.3
+	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
 )
 
@@ -27,7 +29,6 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/go-playground/validator/v10 v10.11.0 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
@@ -62,5 +63,4 @@ require (
 	golang.org/x/tools v0.1.10 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	gorm.io/driver/postgres v1.3.8 // indirect
 )
