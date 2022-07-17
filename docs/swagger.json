@@ -4,6 +4,102 @@
         "contact": {}
     },
     "paths": {
+        "/course": {
+            "post": {
+                "description": "Create a course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Course creation",
+                "parameters": [
+                    {
+                        "description": "Course object which will be created",
+                        "name": "course",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.CreateCourse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseCreated"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCreateCourseBadRequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/:courseID": {
+            "get": {
+                "description": "Get a course by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Course retrieval",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseByIDBadRequestErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCourseNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "A simple health check.",
@@ -47,6 +143,86 @@
         }
     },
     "definitions": {
+        "handler.HttpCourseByIDBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Missing course_id param"
+                }
+            }
+        },
+        "handler.HttpCourseCreated": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "course_published": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "handler.HttpCourseNotFoundErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Course Not Found"
+                }
+            }
+        },
+        "handler.HttpCourseOk": {
+            "type": "object",
+            "properties": {
+                "course_description": {
+                    "type": "string",
+                    "example": "Effective Eureka is a course about Go."
+                },
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "course_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "course_thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
+                },
+                "course_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "handler.HttpCreateCourseBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Bad Request"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/shared.FieldError"
+                    }
+                }
+            }
+        },
+        "httputil.HttpInternalServerErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "internal server error"
+                }
+            }
+        },
         "httputil.PingInternalServerErr": {
             "type": "object",
             "properties": {
@@ -62,6 +238,45 @@
                 "message": {
                     "type": "string",
                     "example": "pong"
+                }
+            }
+        },
+        "input.CreateCourse": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "This is a catalog video manager API."
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/thumbnail/1.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "shared.FieldError": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string",
+                    "example": "title"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "title is required"
                 }
             }
         }

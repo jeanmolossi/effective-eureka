@@ -1,4 +1,9 @@
+# Environment
 .env*.local
 
-mocks/*
+# Tests
+src/tests/*
+
+# Keep
 !.gitkeep
+.docker/dbdata/
