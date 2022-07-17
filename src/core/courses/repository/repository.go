@@ -49,5 +49,29 @@ func (r *repo) Create(course domain.Course) (domain.Course, error) {
 }
 
 func (r *repo) Edit(courseID string, courseUpdater domain.CourseUpdater) (domain.Course, error) {
-	return nil, fmt.Errorf("not implemented")
+	// Get course by ID
+	course, err := r.GetByID(courseID)
+	if err != nil {
+		return nil, err
+	}
+
+	if course == nil {
+		return nil, fmt.Errorf("course not found")
+	}
+
+	// execute updater
+	updatedCourse, err := courseUpdater(course)
+	if err != nil {
+		return nil, fmt.Errorf("[courseUpdater] error updating course: %v", err)
+	}
+
+	model := DomainToModel(updatedCourse, nil, nil)
+	// Save course: https://gorm.io/docs/update.html#Save-All-Fields
+	result := r.db.Table("courses").Where("course_id = ?", courseID).Save(model).Scan(model)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error updating course: %v", result.Error)
+	}
+
+	return ModelToDomain(model), nil
 }

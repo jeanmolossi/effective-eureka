@@ -46,7 +46,9 @@ type CreateCourse interface {
 	Run(course Course) (Course, error)
 }
 
+// EditCourseInfo is interface segregation to edit a course info.
 type EditCourseInfo interface {
+	// Run is the method with handles application to edit a course info.
 	Run(course Course) (Course, error)
 }
 
