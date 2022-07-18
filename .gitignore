@@ -4,6 +4,10 @@
 # Tests
 src/tests/*
 
+# Misc
+.docker/dbdata/
+.vscode/
+.idea/
+
 # Keep
 !.gitkeep
-.docker/dbdata/
