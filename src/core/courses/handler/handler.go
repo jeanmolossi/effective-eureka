@@ -9,9 +9,9 @@ import (
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/input"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/usecase"
-	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // Handler is a struct to manage courses usecases.
@@ -24,14 +24,8 @@ type Handler struct {
 }
 
 // NewHandler is a factory method to create a Handler.
-func NewHandler() (*Handler, error) {
-	dbConn := shared.NewDbConnection()
-	err := dbConn.Connect()
-	if err != nil {
-		return nil, err
-	}
-
-	repo := repository.NewRepository(dbConn.DB())
+func NewHandler(db *gorm.DB) *Handler {
+	repo := repository.NewRepository(db)
 	getCourseByID := usecase.NewGetCourseByID(repo)
 	createCourse := usecase.NewCreateCourse(repo)
 	editCourseInfo := usecase.NewEditCourseInfo(repo)
@@ -42,7 +36,7 @@ func NewHandler() (*Handler, error) {
 		editCourseInfo,
 
 		logger.NewLogger(),
-	}, nil
+	}
 }
 
 // CreateCourse is a endpoint to create a course.
