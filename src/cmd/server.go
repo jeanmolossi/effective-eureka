@@ -9,8 +9,10 @@ import (
 
 	coursesHandler "github.com/jeanmolossi/effective-eureka/src/core/courses/handler"
 	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
+	studentsHandler "github.com/jeanmolossi/effective-eureka/src/core/students/handler"
 
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/auth"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 
 	"github.com/labstack/echo/v4"
@@ -23,19 +25,31 @@ func RunServer() {
 	e := echo.New()
 	e.Validator = shared.NewCustomValidator()
 
+	dbConn := shared.NewDbConnection()
+	err := dbConn.Connect()
+	if err != nil {
+		e.Logger.Fatal(err)
+	}
+
 	// Middlewares
 	e.Use(middleware.RequestID())
 	e.Use(logger.Middleware())
+	e.Use(auth.Middleware(dbConn.DB()))
 
 	// Courses
-	ch, err := coursesHandler.NewHandler()
-	if err != nil {
-		e.Logger.Fatal(err)
-		return
-	}
+	ch := coursesHandler.NewHandler(dbConn.DB())
 	e.POST("/course", ch.CreateCourse)
 	e.GET("/course/:courseID", ch.GetCourseByID)
 	e.PUT("/course/:courseID", ch.EditCourseInfo)
+
+	// Authentication
+	ah := auth.NewHandler(dbConn.DB())
+	e.POST("/auth/login", ah.Login)
+	e.POST("/auth/logout", ah.Logout)
+
+	// Students
+	sh := studentsHandler.NewHandler(dbConn.DB())
+	e.POST("/students/register", sh.RegisterStudent)
 
 	// Routes
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
