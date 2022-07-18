@@ -111,8 +111,8 @@ func GetFieldError(err validator.FieldError, moduleErrMap ModuleErrorMap) error 
 
 // FieldError is a struct to manage the field errors.
 type FieldError struct {
-	Field string `json:"field" example:"title"`
-	Err   string `json:"message" example:"title is required"`
+	Field string `json:"field" example:"field_name"`
+	Err   string `json:"message" example:"field_name is required"`
 }
 
 // Error implements error interface.

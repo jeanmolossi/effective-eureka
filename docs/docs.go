@@ -210,6 +210,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/students/register": {
+            "post": {
+                "description": "Register a new student.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Register a new student.",
+                "parameters": [
+                    {
+                        "description": "Student information",
+                        "name": "student",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.StudentInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpStudentRegistered"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCreateStudentBadRequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpStudentInternalServerErr"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -284,6 +330,21 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.HttpCreateStudentBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Bad Request"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/shared.FieldError"
+                    }
+                }
+            }
+        },
         "handler.HttpEditCourseInfoBadRequestErr": {
             "type": "object",
             "properties": {
@@ -296,6 +357,28 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/shared.FieldError"
                     }
+                }
+            }
+        },
+        "handler.HttpStudentInternalServerErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Server Error"
+                }
+            }
+        },
+        "handler.HttpStudentRegistered": {
+            "type": "object",
+            "properties": {
+                "student_email": {
+                    "type": "string",
+                    "example": "john@doe.com"
+                },
+                "student_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
                 }
             }
         },
@@ -371,16 +454,35 @@ const docTemplate = `{
                 }
             }
         },
+        "input.StudentInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "john@doe.com"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 8,
+                    "example": "123456789"
+                }
+            }
+        },
         "shared.FieldError": {
             "type": "object",
             "properties": {
                 "field": {
                     "type": "string",
-                    "example": "title"
+                    "example": "field_name"
                 },
                 "message": {
                     "type": "string",
-                    "example": "title is required"
+                    "example": "field_name is required"
                 }
             }
         }
