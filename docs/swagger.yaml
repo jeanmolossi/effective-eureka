@@ -136,17 +136,17 @@ definitions:
     type: object
   input.StudentInfo:
     properties:
-      email:
-        example: john@doe.com
-        type: string
       password:
         example: "123456789"
         maxLength: 64
         minLength: 8
         type: string
+      username:
+        example: john@doe.com
+        type: string
     required:
-    - email
     - password
+    - username
     type: object
   shared.FieldError:
     properties:

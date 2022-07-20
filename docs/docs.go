@@ -457,19 +457,19 @@ const docTemplate = `{
         "input.StudentInfo": {
             "type": "object",
             "required": [
-                "email",
-                "password"
+                "password",
+                "username"
             ],
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "john@doe.com"
-                },
                 "password": {
                     "type": "string",
                     "maxLength": 64,
                     "minLength": 8,
                     "example": "123456789"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john@doe.com"
                 }
             }
         },
