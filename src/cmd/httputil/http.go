@@ -14,3 +14,8 @@ type HttpInternalServerErr struct {
 type HttpBadRequestErr struct {
 	Message string `json:"error" example:"bad request"`
 }
+
+// HttpForbiddenErr returns a error message
+type HttpForbiddenErr struct {
+	Message string `json:"error" example:"forbidden"`
+}
