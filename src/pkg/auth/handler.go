@@ -76,19 +76,26 @@ func (h *Handler) Login(c echo.Context) error {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param  cookies header string true "Access token cookie"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 500 {object} map[string]string
+// @Security access_token
 // @Router /auth/logout [post]
 func (h *Handler) Logout(c echo.Context) error {
-	accessToken, err := c.Cookie("access_token")
+	var accessToken string
+	accessTokenCookie, err := c.Cookie("access_token")
 	if err != nil {
-		return c.JSON(http.StatusForbidden, map[string]string{"message": "No access token found"})
+		accessToken = c.Request().Header.Get("Authorization")
+		if accessToken == "" {
+			return c.JSON(http.StatusForbidden, map[string]string{"message": "No access token found"})
+		}
+
+	} else {
+		accessToken = accessTokenCookie.Value
 	}
 
-	_, sessionID, err := Decode(accessToken.Value)
+	_, sessionID, err := Decode(accessToken)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, map[string]string{"message": err.Error()})
 	}
@@ -98,11 +105,11 @@ func (h *Handler) Logout(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, map[string]string{"message": err.Error()})
 	}
 
-	accessToken.Expires = time.Now().UTC().Local().Add(time.Hour * 24 * -7)
+	accessTokenCookie.Expires = time.Now().UTC().Local().Add(time.Hour * 24 * -7)
 	c.SetCookie(&http.Cookie{
 		Name:    "access_token",
 		Value:   "null",
-		Expires: accessToken.Expires,
+		Expires: accessTokenCookie.Expires,
 	})
 
 	return c.JSON(http.StatusAccepted, map[string]string{"message": "Logged out"})

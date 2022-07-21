@@ -50,6 +50,7 @@ func RunServer() {
 	// Students
 	sh := studentsHandler.NewHandler(dbConn.DB())
 	e.POST("/students/register", sh.RegisterStudent)
+	e.GET("/students/me", sh.GetMe)
 
 	// Routes
 	e.GET("/swagger/*", echoSwagger.WrapHandler)

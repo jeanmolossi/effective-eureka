@@ -67,3 +67,19 @@ func (h *Handler) RegisterStudent(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, NewHttpStudentRegistered(registeredStudent))
 }
+
+// GetMe returns the auth user.
+//
+// @Summary Get auth student.
+// @Description Get auth student.
+// @Tags students
+// @Accept json
+// @Produce json
+// @Success 200 {object} HttpStudentRegistered
+// @Failure 400 {object} HttpCreateStudentBadRequestErr
+// @Failure 500 {object} HttpStudentInternalServerErr
+// @Security access_token
+// @Router /students/me [get]
+func (h *Handler) GetMe(c echo.Context) error {
+	return c.JSON(http.StatusOK, nil)
+}

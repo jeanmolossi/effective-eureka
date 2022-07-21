@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 	"regexp"
 	"time"
@@ -19,14 +20,24 @@ func Middleware(db *gorm.DB) echo.MiddlewareFunc {
 				return next(c)
 			}
 
+			log.Println(c.Request().Header)
+
+			var tokenStr string
 			token, err := c.Cookie("access_token")
 			if err != nil {
-				return c.JSON(http.StatusForbidden, httputil.HttpForbiddenErr{
-					Message: "Missing authentication",
-				})
+				authToken := c.Request().Header.Get("Authorization")
+				if authToken == "" {
+					return c.JSON(http.StatusForbidden, httputil.HttpForbiddenErr{
+						Message: "Missing authentication",
+					})
+				}
+
+				tokenStr = authToken
+			} else {
+				tokenStr = token.Value
 			}
 
-			if !sessionProvider.IsValidSession(token.Value) {
+			if !sessionProvider.IsValidSession(tokenStr) {
 				c.SetCookie(&http.Cookie{
 					Name:    "access_token",
 					Path:    "/",

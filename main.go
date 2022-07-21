@@ -17,7 +17,9 @@ import (
 // @contact.email	jean.carlosmolossi@gmail.com
 // @license.name	Apache 2.0
 // @license.url		github.com/jeanmolossi/effective-eureka/LICENSE
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apikey access_token
+// @in 			  header
+// @name 		  Authorization
 func main() {
 	docs.SwaggerInfo.Title = "Effective Eureka API"
 	docs.SwaggerInfo.Description = "This is a catalog video manager API."

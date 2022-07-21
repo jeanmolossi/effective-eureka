@@ -49,6 +49,7 @@ func NewHandler(db *gorm.DB) *Handler {
 // @success 201 {object} HttpCourseCreated
 // @failure 400 {object} HttpCreateCourseBadRequestErr
 // @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
 // @router /course [post]
 func (h *Handler) CreateCourse(c echo.Context) error {
 	var input *input.CreateCourse
@@ -95,6 +96,7 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 // @failure 400 {object} HttpCourseByIDBadRequestErr
 // @failure 404 {object} HttpCourseNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
 // @router /course/:courseID [get]
 func (h *Handler) GetCourseByID(c echo.Context) error {
 	courseID := c.Param("courseID")
@@ -120,6 +122,7 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 // @failure 400 {object} HttpEditCourseInfoBadRequestErr
 // @failure 404 {object} HttpCourseNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
 // @router /course/:courseID [put]
 func (h *Handler) EditCourseInfo(c echo.Context) error {
 	courseID := c.Param("courseID")
