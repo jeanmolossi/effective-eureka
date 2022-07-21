@@ -8,14 +8,14 @@ import (
 )
 
 type Session struct {
-	SessID       string    `json:"sess_id"`
-	StudentID    string    `json:"sess_student_id"`
-	Expiration   time.Time `json:"sess_expiration"`
-	AccessToken  string    `json:"sess_access_token"`
-	RefreshToken string    `json:"sess_refresh_token"`
+	SessID       string        `json:"sess_id"`
+	StudentID    string        `json:"sess_student_id"`
+	Expiration   time.Time     `json:"sess_expiration"`
+	AccessToken  *AccessToken  `json:"sess_access_token"`
+	RefreshToken *RefreshToken `json:"sess_refresh_token"`
 }
 
-func NewSession(sessID, studentID, accessToken, refreshToken string, expiration time.Time) *Session {
+func NewSession(sessID, studentID string, accessToken *AccessToken, refreshToken *RefreshToken, expiration time.Time) *Session {
 	return &Session{
 		SessID:       sessID,
 		StudentID:    studentID,
@@ -26,11 +26,19 @@ func NewSession(sessID, studentID, accessToken, refreshToken string, expiration 
 }
 
 func (s *Session) IsExpired() bool {
-	return time.Now().UTC().Local().After(s.Expiration)
+	return time.Now().UTC().Local().After(
+		s.Expiration.UTC().Local(),
+	)
 }
 
 func (s *Session) IsValid() bool {
 	return !s.IsExpired()
+}
+
+func (s *Session) IsRefreshExpired() bool {
+	return time.Now().UTC().Local().After(
+		s.RefreshToken.Expiration.UTC().Local(),
+	)
 }
 
 func (s *Session) Hash() string {
@@ -39,7 +47,7 @@ func (s *Session) Hash() string {
 	)
 }
 
-func (s *Session) Decode(hash string) (string, string, error) {
+func Decode(hash string) (string, string, error) {
 	decoded, err := base64.StdEncoding.DecodeString(hash)
 	if err != nil {
 		return "", "", err

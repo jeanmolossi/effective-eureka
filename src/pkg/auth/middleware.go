@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"log"
 	"net/http"
 	"regexp"
+	"time"
 
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
 	"github.com/labstack/echo/v4"
@@ -19,15 +19,20 @@ func Middleware(db *gorm.DB) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			token, err := c.Cookie("session_token")
+			token, err := c.Cookie("access_token")
 			if err != nil {
-				log.Println(err)
 				return c.JSON(http.StatusForbidden, httputil.HttpForbiddenErr{
-					Message: err.Error(),
+					Message: "Missing authentication",
 				})
 			}
 
 			if !sessionProvider.IsValidSession(token.Value) {
+				c.SetCookie(&http.Cookie{
+					Name:    "access_token",
+					Path:    "/",
+					Expires: time.Unix(0, 0),
+				})
+
 				return c.JSON(http.StatusForbidden, httputil.HttpForbiddenErr{
 					Message: "Missing authentication",
 				})
@@ -41,7 +46,7 @@ func Middleware(db *gorm.DB) echo.MiddlewareFunc {
 func shouldIgnorePath(path string) bool {
 	middlewareShouldIgnorePaths := []string{
 		`^/ping$`,
-		`/auth/(.*)$`,
+		`/auth/(login)$`,
 		`/swagger/(.*)$`,
 		`/students/(register)$`,
 	}
