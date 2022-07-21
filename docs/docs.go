@@ -83,6 +83,11 @@ const docTemplate = `{
         },
         "/auth/logout": {
             "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Login",
                 "consumes": [
                     "application/json"
@@ -94,15 +99,6 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Logout",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Access token cookie",
-                        "name": "cookies",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -145,6 +141,11 @@ const docTemplate = `{
         },
         "/course": {
             "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Create a course",
                 "consumes": [
                     "application/json"
@@ -191,6 +192,11 @@ const docTemplate = `{
         },
         "/course/:courseID": {
             "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Get a course by ID",
                 "consumes": [
                     "application/json"
@@ -239,6 +245,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Edit a course basic information",
                 "consumes": [
                     "application/json"
@@ -332,6 +343,46 @@ const docTemplate = `{
                         "description": "Service Unavailable",
                         "schema": {
                             "$ref": "#/definitions/httputil.PingInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/me": {
+            "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Get auth student.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Get auth student.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpStudentRegistered"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpCreateStudentBadRequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpStudentInternalServerErr"
                         }
                     }
                 }
@@ -631,8 +682,10 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "access_token": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

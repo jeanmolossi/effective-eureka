@@ -220,12 +220,6 @@ paths:
       consumes:
       - application/json
       description: Login
-      parameters:
-      - description: Access token cookie
-        in: header
-        name: cookies
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -253,6 +247,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - access_token: []
       summary: Logout
       tags:
       - auth
@@ -283,6 +279,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
       summary: Course creation
       tags:
       - courses
@@ -316,6 +314,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
       summary: Course retrieval
       tags:
       - courses
@@ -354,6 +354,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
       summary: Course edition
       tags:
       - courses
@@ -384,6 +386,31 @@ paths:
       summary: Ping the server.
       tags:
       - healthcheck
+  /students/me:
+    get:
+      consumes:
+      - application/json
+      description: Get auth student.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpStudentRegistered'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HttpCreateStudentBadRequestErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.HttpStudentInternalServerErr'
+      security:
+      - access_token: []
+      summary: Get auth student.
+      tags:
+      - students
   /students/register:
     post:
       consumes:
@@ -415,6 +442,8 @@ paths:
       tags:
       - students
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  access_token:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
