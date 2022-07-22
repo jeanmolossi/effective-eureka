@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"net/http"
 	"regexp"
 	"time"
@@ -19,8 +18,6 @@ func Middleware(db *gorm.DB) echo.MiddlewareFunc {
 			if shouldIgnorePath(c.Path()) {
 				return next(c)
 			}
-
-			log.Println(c.Request().Header)
 
 			var tokenStr string
 			token, err := c.Cookie("access_token")

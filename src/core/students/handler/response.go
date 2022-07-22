@@ -13,3 +13,15 @@ func NewHttpStudentRegistered(student domain.Student) *HttpStudentRegistered {
 		StudentEmail: student.GetStudentEmail(),
 	}
 }
+
+type HttpStudent struct {
+	StudentID    string `json:"student_id" example:"05d4d9d3-01a3-4fd3-8d3e-e3178522f514"`
+	StudentEmail string `json:"student_email" example:"jean@email.com"`
+}
+
+func NewHttpStudent(student domain.Student) *HttpStudent {
+	return &HttpStudent{
+		StudentID:    student.GetStudentID(),
+		StudentEmail: student.GetStudentEmail(),
+	}
+}

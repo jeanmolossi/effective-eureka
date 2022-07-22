@@ -19,3 +19,8 @@ type HttpBadRequestErr struct {
 type HttpForbiddenErr struct {
 	Message string `json:"error" example:"forbidden"`
 }
+
+// HttpUnauthorizedErr returns a error message
+type HttpUnauthorizedErr struct {
+	Message string `json:"error" example:"unauthorized"`
+}

@@ -446,10 +446,12 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 6
+                    "minLength": 6,
+                    "example": "123456789"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "jean@email.com"
                 }
             }
         },

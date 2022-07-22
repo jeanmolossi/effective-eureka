@@ -28,6 +28,12 @@ type RegisterStudent interface {
 	Run(student Student) (Student, error)
 }
 
+// GetMe returns the auth user.
+type GetMe interface {
+	// Run execute get me.
+	Run(hash string) (Student, error)
+}
+
 type StudentRepository interface {
 	// GetStudentByID returns a student by ID.
 	GetStudentByID(studentID string) (Student, error)

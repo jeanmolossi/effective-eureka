@@ -3,8 +3,8 @@ package auth
 import "errors"
 
 type LoginCredentials struct {
-	Username string `json:"username" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=6,max=255"`
+	Username string `json:"username" validate:"required,email" example:"jean@email.com"`
+	Password string `json:"password" validate:"required,min=6,max=255" example:"123456789"`
 }
 
 func (l *LoginCredentials) GetErrorMap() map[string]map[string]error {

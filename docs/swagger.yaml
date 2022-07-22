@@ -2,10 +2,12 @@ definitions:
   auth.LoginCredentials:
     properties:
       password:
+        example: "123456789"
         maxLength: 255
         minLength: 6
         type: string
       username:
+        example: jean@email.com
         type: string
     required:
     - password
