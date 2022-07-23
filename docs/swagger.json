@@ -359,6 +359,70 @@
                 }
             }
         },
+        "/course/{courseID}/modules": {
+            "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Get all modules from a course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Module retrieval",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handler.HttpModuleOk"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/module/{moduleID}": {
             "get": {
                 "security": [
@@ -974,6 +1038,10 @@
                     "type": "string",
                     "maxLength": 255,
                     "example": "Effective Eureka is a course about effective eureka."
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
                 },
                 "thumbnail": {
                     "type": "string",

@@ -2,8 +2,6 @@
 package repository
 
 import (
-	"errors"
-
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
 	"gorm.io/gorm"
 )
@@ -46,7 +44,22 @@ func (r *moduleRepository) GetByID(moduleID string) (domain.Module, error) {
 
 // GetByCourseID returns a list of modules by course ID.
 func (r *moduleRepository) GetByCourseID(courseID string) ([]domain.Module, error) {
-	return nil, errors.New("not implemented")
+	if !r.IssetCourseID(courseID) {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	models := []*ModuleModel{}
+	result := r.db.Table(r.table).Where("course_id = ?", courseID).Find(&models)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	domainsModules := make([]domain.Module, len(models))
+	for i, model := range models {
+		domainsModules[i] = ModelToDomain(model)
+	}
+
+	return domainsModules, nil
 }
 
 // Create creates a new module.

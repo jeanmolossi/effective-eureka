@@ -17,9 +17,10 @@ import (
 
 // Handler is a struct to manage courses usecases.
 type Handler struct {
-	createModule   domain.CreateModuleInCourse
-	getModuleByID  domain.GetModuleByID
-	editModuleInfo domain.EditModuleInfo
+	createModule         domain.CreateModuleInCourse
+	getModuleByID        domain.GetModuleByID
+	editModuleInfo       domain.EditModuleInfo
+	getModulesFromCourse domain.GetModuleFromCourse
 
 	logger logger.Logger
 }
@@ -30,11 +31,13 @@ func NewHandler(db *gorm.DB) *Handler {
 	createModule := usecase.NewCreateModuleInCourse(repo)
 	getModuleByID := usecase.NewGetModuleByID(repo)
 	editModuleInfo := usecase.NewEditModuleInfo(repo)
+	getModulesFromCourse := usecase.NewGetModuleFromCourse(repo)
 
 	return &Handler{
 		createModule,
 		getModuleByID,
 		editModuleInfo,
+		getModulesFromCourse,
 
 		logger.NewLogger(),
 	}
@@ -179,4 +182,42 @@ func (h *Handler) EditModuleInfo(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, NewHttpModuleOk(newModule))
+}
+
+// GetModulesFromCourse is a endpoint to get all modules from a course.
+//
+// @Summary Module retrieval
+// @tags modules
+// @description Get all modules from a course
+// @accept json
+// @produce json
+// @param courseID path string true "Course ID"
+// @success 200 {array} HttpModuleOk
+// @failure 400 {object} HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /course/{courseID}/modules [get]
+func (h *Handler) GetModulesFromCourse(c echo.Context) error {
+	courseID := c.Param("courseID")
+
+	if courseID == "" {
+		return c.JSON(http.StatusBadRequest, httputil.HttpBadRequestErr{
+			Message: "course id is required",
+		})
+	}
+
+	modules, err := h.getModulesFromCourse.Run(courseID)
+	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
+		return ErrorHandler(c, err)
+	}
+
+	httpModules := make([]*HttpModuleOk, len(modules))
+	for i, module := range modules {
+		httpModules[i] = NewHttpModuleOk(module)
+	}
+
+	return c.JSON(http.StatusOK, httpModules)
 }
