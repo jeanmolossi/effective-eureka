@@ -552,6 +552,71 @@
                 }
             }
         },
+        "/module/{moduleID}/section": {
+            "post": {
+                "description": "Create a section in module",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sections"
+                ],
+                "summary": "Create a section in module",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Module ID",
+                        "name": "moduleID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Section data",
+                        "name": "section",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.CreateSection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpSectionCreated"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "A simple health check.",
@@ -880,6 +945,35 @@
                 }
             }
         },
+        "handler.HttpSectionCreated": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f515"
+                },
+                "module_id": {
+                    "type": "string",
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
+                },
+                "section_id": {
+                    "type": "string",
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
+                },
+                "section_index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "section_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "section_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
+                }
+            }
+        },
         "handler.HttpStudentForbiddenErr": {
             "type": "object",
             "properties": {
@@ -908,6 +1002,15 @@
                 "student_id": {
                     "type": "string",
                     "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                }
+            }
+        },
+        "httputil.HttpBadRequestErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "bad request"
                 }
             }
         },
@@ -1000,6 +1103,28 @@
                 "thumbnail": {
                     "type": "string",
                     "example": "https://effective-eureka.s3.amazonaws.com/courses/thumbnail/1.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "input.CreateSection": {
+            "type": "object",
+            "required": [
+                "index",
+                "title"
+            ],
+            "properties": {
+                "index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
                 },
                 "title": {
                     "type": "string",

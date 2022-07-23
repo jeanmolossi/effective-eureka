@@ -9,6 +9,7 @@ import (
 
 	coursesHandler "github.com/jeanmolossi/effective-eureka/src/core/courses/handler"
 	modulesHandler "github.com/jeanmolossi/effective-eureka/src/core/modules/handler"
+	sectionsHandler "github.com/jeanmolossi/effective-eureka/src/core/sections/handler"
 	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
 	studentsHandler "github.com/jeanmolossi/effective-eureka/src/core/students/handler"
 
@@ -49,6 +50,10 @@ func RunServer() {
 	e.GET("/module/:moduleID", mh.GetModule)
 	e.GET("/course/:courseID/modules", mh.GetModulesFromCourse)
 	e.PUT("/module/:moduleID", mh.EditModuleInfo)
+
+	// Sections
+	sech := sectionsHandler.NewHandler(dbConn.DB())
+	e.POST("/module/:moduleID/section", sech.CreateSectionInModule)
 
 	// Authentication
 	ah := auth.NewHandler(dbConn.DB())

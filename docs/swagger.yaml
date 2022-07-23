@@ -134,6 +134,27 @@ definitions:
         example: Effective Eureka
         type: string
     type: object
+  handler.HttpSectionCreated:
+    properties:
+      course_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f515
+        type: string
+      module_id:
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
+        type: string
+      section_id:
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
+        type: string
+      section_index:
+        example: 1
+        type: integer
+      section_published:
+        example: false
+        type: boolean
+      section_title:
+        example: Effective Eureka
+        type: string
+    type: object
   handler.HttpStudentForbiddenErr:
     properties:
       error:
@@ -153,6 +174,12 @@ definitions:
         type: string
       student_id:
         example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        type: string
+    type: object
+  httputil.HttpBadRequestErr:
+    properties:
+      error:
+        example: bad request
         type: string
     type: object
   httputil.HttpInternalServerErr:
@@ -221,6 +248,22 @@ definitions:
         maxLength: 255
         type: string
     required:
+    - title
+    type: object
+  input.CreateSection:
+    properties:
+      index:
+        example: 1
+        type: integer
+      published:
+        example: true
+        type: boolean
+      title:
+        example: Effective Eureka
+        maxLength: 255
+        type: string
+    required:
+    - index
     - title
     type: object
   input.EditCourseInfo:
@@ -635,6 +678,49 @@ paths:
       summary: Module retrieval
       tags:
       - modules
+  /module/{moduleID}/section:
+    post:
+      consumes:
+      - application/json
+      description: Create a section in module
+      parameters:
+      - description: Module ID
+        in: path
+        name: moduleID
+        required: true
+        type: string
+      - description: Section data
+        in: body
+        name: section
+        required: true
+        schema:
+          $ref: '#/definitions/input.CreateSection'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.HttpSectionCreated'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      summary: Create a section in module
+      tags:
+      - sections
   /ping:
     get:
       consumes:
