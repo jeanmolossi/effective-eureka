@@ -84,6 +84,7 @@ func (h *Handler) RegisterStudent(c echo.Context) error {
 // @Produce json
 // @Success 200 {object} HttpStudentRegistered
 // @Failure 400 {object} HttpCreateStudentBadRequestErr
+// @Failure 403 {object} HttpStudentForbiddenErr
 // @Failure 500 {object} HttpStudentInternalServerErr
 // @Security access_token
 // @Router /students/me [get]

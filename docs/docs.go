@@ -379,6 +379,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/handler.HttpCreateStudentBadRequestErr"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpStudentForbiddenErr"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -553,6 +559,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/shared.FieldError"
                     }
+                }
+            }
+        },
+        "handler.HttpStudentForbiddenErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Missing authentication"
                 }
             }
         },

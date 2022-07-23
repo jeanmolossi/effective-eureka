@@ -82,6 +82,12 @@ definitions:
           $ref: '#/definitions/shared.FieldError'
         type: array
     type: object
+  handler.HttpStudentForbiddenErr:
+    properties:
+      error:
+        example: Missing authentication
+        type: string
+    type: object
   handler.HttpStudentInternalServerErr:
     properties:
       error:
@@ -404,6 +410,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/handler.HttpCreateStudentBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handler.HttpStudentForbiddenErr'
         "500":
           description: Internal Server Error
           schema:

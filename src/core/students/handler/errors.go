@@ -12,3 +12,8 @@ type HttpCreateStudentBadRequestErr struct {
 type HttpStudentInternalServerErr struct {
 	Err string `json:"error" example:"Internal Server Error"`
 }
+
+// HttpStudentForbiddenErr is a struct to modeling the error response when the request is forbidden.
+type HttpStudentForbiddenErr struct {
+	Err string `json:"error" example:"Missing authentication"`
+}
