@@ -113,6 +113,27 @@ definitions:
         example: Effective Eureka
         type: string
     type: object
+  handler.HttpModuleOk:
+    properties:
+      course_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f515
+        type: string
+      module_description:
+        example: Effective Eureka is a course about Go.
+        type: string
+      module_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        type: string
+      module_published:
+        example: false
+        type: boolean
+      module_thumbnail:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
+        type: string
+      module_title:
+        example: Effective Eureka
+        type: string
+    type: object
   handler.HttpStudentForbiddenErr:
     properties:
       error:
@@ -144,6 +165,12 @@ definitions:
     properties:
       error:
         example: missing authentication
+        type: string
+    type: object
+  httputil.HttpNotFoundErr:
+    properties:
+      error:
+        example: not found
         type: string
     type: object
   httputil.PingInternalServerErr:
@@ -462,6 +489,45 @@ paths:
       security:
       - access_token: []
       summary: Module creation
+      tags:
+      - modules
+  /module/{moduleID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a module
+      parameters:
+      - description: Module ID
+        in: path
+        name: moduleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpModuleOk'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
+      summary: Module retrieval
       tags:
       - modules
   /ping:

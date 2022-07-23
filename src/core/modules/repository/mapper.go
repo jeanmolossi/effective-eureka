@@ -17,11 +17,14 @@ func ModelToDomain(model *ModuleModel) domain.Module {
 		return domain.NewModule("", "", "", "", false)
 	}
 
-	return domain.NewModule(
+	module := domain.NewModule(
 		model.CourseID,
 		model.ModuleTitle,
 		model.ModuleThumb,
 		model.ModuleDescription,
 		model.ModulePublished,
 	)
+	module.SetModuleID(model.ModuleID)
+
+	return module
 }

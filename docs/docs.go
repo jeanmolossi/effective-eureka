@@ -371,6 +371,67 @@ const docTemplate = `{
                 }
             }
         },
+        "/module/{moduleID}": {
+            "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Get a module",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Module retrieval",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Module ID",
+                        "name": "moduleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpModuleOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "A simple health check.",
@@ -670,6 +731,35 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.HttpModuleOk": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f515"
+                },
+                "module_description": {
+                    "type": "string",
+                    "example": "Effective Eureka is a course about Go."
+                },
+                "module_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "module_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "module_thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
+                },
+                "module_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
+                }
+            }
+        },
         "handler.HttpStudentForbiddenErr": {
             "type": "object",
             "properties": {
@@ -716,6 +806,15 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "missing authentication"
+                }
+            }
+        },
+        "httputil.HttpNotFoundErr": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "not found"
                 }
             }
         },

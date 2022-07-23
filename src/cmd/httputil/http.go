@@ -29,3 +29,8 @@ type HttpUnauthorizedErr struct {
 type HttpMissingAuthenticationErr struct {
 	Message string `json:"error" example:"missing authentication"`
 }
+
+// HttpNotFoundErr returns a error message
+type HttpNotFoundErr struct {
+	Message string `json:"error" example:"not found"`
+}

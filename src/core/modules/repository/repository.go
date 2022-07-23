@@ -22,7 +22,13 @@ func NewRepository(db *gorm.DB) *moduleRepository {
 
 // GetByID returns a module by ID.
 func (r *moduleRepository) GetByID(moduleID string) (domain.Module, error) {
-	return nil, errors.New("not implemented")
+	model := &ModuleModel{}
+	result := r.db.Table(r.table).Where("module_id = ?", moduleID).First(model)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return ModelToDomain(model), nil
 }
 
 // GetByCourseID returns a list of modules by course ID.

@@ -46,6 +46,7 @@ func RunServer() {
 	// Modules
 	mh := modulesHandler.NewHandler(dbConn.DB())
 	e.POST("/course/:courseID/module", mh.CreateModule)
+	e.GET("/module/:moduleID", mh.GetModule)
 
 	// Authentication
 	ah := auth.NewHandler(dbConn.DB())

@@ -17,7 +17,8 @@ import (
 
 // Handler is a struct to manage courses usecases.
 type Handler struct {
-	createModule domain.CreateModuleInCourse
+	createModule  domain.CreateModuleInCourse
+	getModuleByID domain.GetModuleByID
 
 	logger logger.Logger
 }
@@ -26,9 +27,11 @@ type Handler struct {
 func NewHandler(db *gorm.DB) *Handler {
 	repo := repository.NewRepository(db)
 	createModule := usecase.NewCreateModuleInCourse(repo)
+	getModuleByID := usecase.NewGetModuleByID(repo)
 
 	return &Handler{
 		createModule,
+		getModuleByID,
 
 		logger.NewLogger(),
 	}
@@ -85,4 +88,39 @@ func (h *Handler) CreateModule(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, NewHttpModuleCreated(newModule))
+}
+
+// GetModule is a endpoint to get a module.
+//
+// @Summary Module retrieval
+// @tags modules
+// @description Get a module
+// @accept json
+// @produce json
+// @param moduleID path string true "Module ID"
+// @success 200 {object} HttpModuleOk
+// @failure 400 {object} HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /module/{moduleID} [get]
+func (h *Handler) GetModule(c echo.Context) error {
+	moduleID := c.Param("moduleID")
+
+	if moduleID == "" {
+		return c.JSON(http.StatusBadRequest, httputil.HttpBadRequestErr{
+			Message: "module id is required",
+		})
+	}
+
+	module, err := h.getModuleByID.Run(moduleID)
+	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
+		return c.JSON(http.StatusNotFound, httputil.HttpNotFoundErr{
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, NewHttpModuleOk(module))
 }
