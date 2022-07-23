@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	coursesHandler "github.com/jeanmolossi/effective-eureka/src/core/courses/handler"
+	modulesHandler "github.com/jeanmolossi/effective-eureka/src/core/modules/handler"
 	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
 	studentsHandler "github.com/jeanmolossi/effective-eureka/src/core/students/handler"
 
@@ -41,6 +42,10 @@ func RunServer() {
 	e.POST("/course", ch.CreateCourse)
 	e.GET("/course/:courseID", ch.GetCourseByID)
 	e.PUT("/course/:courseID", ch.EditCourseInfo)
+
+	// Modules
+	mh := modulesHandler.NewHandler(dbConn.DB())
+	e.POST("/course/:courseID/module", mh.CreateModule)
 
 	// Authentication
 	ah := auth.NewHandler(dbConn.DB())

@@ -61,7 +61,7 @@ func (h *Handler) Login(c echo.Context) error {
 		Name:    "access_token",
 		Value:   token.Hash(),
 		Path:    "/",
-		Expires: token.Expiration,
+		Expires: token.RefreshToken.Expiration,
 	})
 
 	return c.JSON(http.StatusOK, map[string]string{"access_token": token.Hash()})

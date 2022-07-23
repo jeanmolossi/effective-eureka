@@ -97,7 +97,7 @@ func (h *Handler) CreateCourse(c echo.Context) error {
 // @failure 404 {object} HttpCourseNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
 // @security access_token
-// @router /course/:courseID [get]
+// @router /course/{courseID} [get]
 func (h *Handler) GetCourseByID(c echo.Context) error {
 	courseID := c.Param("courseID")
 
@@ -123,7 +123,7 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 // @failure 404 {object} HttpCourseNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
 // @security access_token
-// @router /course/:courseID [put]
+// @router /course/{courseID} [put]
 func (h *Handler) EditCourseInfo(c echo.Context) error {
 	courseID := c.Param("courseID")
 	if courseID == "" {
