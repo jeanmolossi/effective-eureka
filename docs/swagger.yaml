@@ -101,7 +101,7 @@ definitions:
         example: Effective Eureka is a course about Go.
         type: string
       module_id:
-        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
         type: string
       module_published:
         example: false
@@ -122,7 +122,7 @@ definitions:
         example: Effective Eureka is a course about Go.
         type: string
       module_id:
-        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
         type: string
       module_published:
         example: false
@@ -225,6 +225,23 @@ definitions:
     type: object
   input.EditCourseInfo:
     properties:
+      description:
+        example: Effective Eureka is a course about effective eureka.
+        maxLength: 255
+        type: string
+      thumbnail:
+        example: https://example.com/thumbnail.png
+        type: string
+      title:
+        example: Effective Eureka
+        maxLength: 255
+        type: string
+    type: object
+  input.EditModuleInfo:
+    properties:
+      course_id:
+        example: f0f8e8c4-8b8f-4d8e-b8e7-8f9e939ca9e8
+        type: string
       description:
         example: Effective Eureka is a course about effective eureka.
         maxLength: 255
@@ -502,6 +519,50 @@ paths:
         name: moduleID
         required: true
         type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpModuleOk'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
+      summary: Module retrieval
+      tags:
+      - modules
+    put:
+      consumes:
+      - application/json
+      description: Edit a module
+      parameters:
+      - description: Module ID
+        in: path
+        name: moduleID
+        required: true
+        type: string
+      - description: Module object which will be updated
+        in: body
+        name: module
+        required: true
+        schema:
+          $ref: '#/definitions/input.EditModuleInfo'
       produces:
       - application/json
       responses:

@@ -5,6 +5,7 @@ import "github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
 func DomainToModel(module domain.Module) *ModuleModel {
 	return &ModuleModel{
 		CourseID:          module.GetCourseID(),
+		ModuleID:          module.GetModuleID(),
 		ModuleTitle:       module.GetModuleTitle(),
 		ModuleThumb:       module.GetModuleThumb(),
 		ModuleDescription: module.GetModuleDescription(),

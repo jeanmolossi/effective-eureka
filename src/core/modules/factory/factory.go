@@ -35,6 +35,7 @@ func (m *module) CreateModule(courseID, title, thumb, desc string, published boo
 }
 
 func (m *module) WithID(id string) Module {
+	m.Module.SetModuleID(id)
 	return m
 }
 

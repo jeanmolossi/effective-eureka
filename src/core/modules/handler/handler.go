@@ -17,8 +17,9 @@ import (
 
 // Handler is a struct to manage courses usecases.
 type Handler struct {
-	createModule  domain.CreateModuleInCourse
-	getModuleByID domain.GetModuleByID
+	createModule   domain.CreateModuleInCourse
+	getModuleByID  domain.GetModuleByID
+	editModuleInfo domain.EditModuleInfo
 
 	logger logger.Logger
 }
@@ -28,10 +29,12 @@ func NewHandler(db *gorm.DB) *Handler {
 	repo := repository.NewRepository(db)
 	createModule := usecase.NewCreateModuleInCourse(repo)
 	getModuleByID := usecase.NewGetModuleByID(repo)
+	editModuleInfo := usecase.NewEditModuleInfo(repo)
 
 	return &Handler{
 		createModule,
 		getModuleByID,
+		editModuleInfo,
 
 		logger.NewLogger(),
 	}
@@ -123,4 +126,57 @@ func (h *Handler) GetModule(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, NewHttpModuleOk(module))
+}
+
+// EditModuleInfo is a endpoint to edit a module.
+//
+// @Summary Module retrieval
+// @tags modules
+// @description Edit a module
+// @accept json
+// @produce json
+// @param moduleID path string true "Module ID"
+// @param module body input.EditModuleInfo true "Module object which will be updated"
+// @success 200 {object} HttpModuleOk
+// @failure 400 {object} HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /module/{moduleID} [put]
+func (h *Handler) EditModuleInfo(c echo.Context) error {
+	input := new(input.EditModuleInfo)
+
+	// Bind input with input struct we expect
+	err := c.Bind(input)
+	if err != nil {
+		h.logger.Errorln("Error binding input", err)
+		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
+			Message: err.Error(),
+		})
+	}
+
+	// Validate input with input struct we expect
+	err = c.Validate(input)
+	if err != nil {
+		h.logger.Errorln("Error validating input", err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	// Create module using factory.
+	module := factory.NewModule().CreateModule(
+		input.CourseID,
+		input.Title,
+		input.Thumbnail,
+		input.Description,
+		input.Published,
+	).WithID(input.ModuleID)
+
+	newModule, err := h.editModuleInfo.Run(module.Build())
+	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
+		return ErrorHandler(c, err)
+	}
+
+	return c.JSON(http.StatusCreated, NewHttpModuleOk(newModule))
 }

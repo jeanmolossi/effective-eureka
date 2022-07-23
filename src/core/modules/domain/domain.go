@@ -65,6 +65,8 @@ type ModuleUpdater func(module Module) (Module, error)
 // ModuleRepository is the interface to manage modules on database.
 // To persist and handle saved modules we should implement that interface.
 type ModuleRepository interface {
+	// IssetCourseID returns true if module has a parent course ID.
+	IssetCourseID(courseID string) bool
 	// GetByID returns a module by ID.
 	GetByID(moduleID string) (Module, error)
 	// GetByCourseID returns a list of modules by course ID.
@@ -72,5 +74,5 @@ type ModuleRepository interface {
 	// Create creates a new module.
 	Create(module Module) (Module, error)
 	// Edit updates a module.
-	Edit(module Module) (Module, error)
+	Edit(moduleID string, updater ModuleUpdater) (Module, error)
 }

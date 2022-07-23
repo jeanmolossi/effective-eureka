@@ -430,6 +430,74 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Edit a module",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Module retrieval",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Module ID",
+                        "name": "moduleID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Module object which will be updated",
+                        "name": "module",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.EditModuleInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpModuleOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
             }
         },
         "/ping": {
@@ -715,7 +783,7 @@ const docTemplate = `{
                 },
                 "module_id": {
                     "type": "string",
-                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
                 },
                 "module_published": {
                     "type": "boolean",
@@ -744,7 +812,7 @@ const docTemplate = `{
                 },
                 "module_id": {
                     "type": "string",
-                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
                 },
                 "module_published": {
                     "type": "boolean",
@@ -891,6 +959,29 @@ const docTemplate = `{
         "input.EditCourseInfo": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka is a course about effective eureka."
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "example": "https://example.com/thumbnail.png"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "input.EditModuleInfo": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string",
+                    "example": "f0f8e8c4-8b8f-4d8e-b8e7-8f9e939ca9e8"
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 255,
