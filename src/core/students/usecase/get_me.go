@@ -16,20 +16,11 @@ func NewGetMe(repo domain.StudentRepository, authProvider *auth.SessionProvider)
 }
 
 // GetMe gets a student by authentication hash.
-func (g *getMe) Run(hash string) (domain.Student, error) {
-	session, err := g.authProvider.GetSession(hash)
+func (g *getMe) Run(studentID string) (domain.Student, error) {
+	student, err := g.repo.GetStudentByID(studentID)
 	if err != nil {
 		return nil, err
 	}
 
-	if session.IsValid() && !session.IsRefreshExpired() {
-		student, err := g.repo.GetStudentByID(session.StudentID)
-		if err != nil {
-			return nil, err
-		}
-
-		return student, nil
-	}
-
-	return nil, nil
+	return student, nil
 }

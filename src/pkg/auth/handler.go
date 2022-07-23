@@ -83,33 +83,17 @@ func (h *Handler) Login(c echo.Context) error {
 // @Security access_token
 // @Router /auth/logout [post]
 func (h *Handler) Logout(c echo.Context) error {
-	var accessToken string
-	accessTokenCookie, err := c.Cookie("access_token")
-	if err != nil {
-		accessToken = c.Request().Header.Get("Authorization")
-		if accessToken == "" {
-			return c.JSON(http.StatusForbidden, map[string]string{"message": "No access token found"})
-		}
+	sessionID := c.Get("sessionID").(string)
 
-	} else {
-		accessToken = accessTokenCookie.Value
-	}
-
-	_, sessionID, err := Decode(accessToken)
+	err := h.provider.DeleteSession(sessionID)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, map[string]string{"message": err.Error()})
 	}
 
-	err = h.provider.DeleteSession(sessionID)
-	if err != nil {
-		return c.JSON(http.StatusForbidden, map[string]string{"message": err.Error()})
-	}
-
-	accessTokenCookie.Expires = time.Now().UTC().Local().Add(time.Hour * 24 * -7)
 	c.SetCookie(&http.Cookie{
 		Name:    "access_token",
 		Value:   "null",
-		Expires: accessTokenCookie.Expires,
+		Expires: time.Unix(0, 0),
 	})
 
 	return c.JSON(http.StatusAccepted, map[string]string{"message": "Logged out"})

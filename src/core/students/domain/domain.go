@@ -31,7 +31,7 @@ type RegisterStudent interface {
 // GetMe returns the auth user.
 type GetMe interface {
 	// Run execute get me.
-	Run(hash string) (Student, error)
+	Run(studentID string) (Student, error)
 }
 
 type StudentRepository interface {

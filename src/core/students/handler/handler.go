@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
@@ -89,7 +90,9 @@ func (h *Handler) RegisterStudent(c echo.Context) error {
 // @Security access_token
 // @Router /students/me [get]
 func (h *Handler) GetMe(c echo.Context) error {
-	student, err := h.getMe.Run(getAuthToken(c))
+	log.Println(c.Get("studentID"))
+	studentID := c.Get("studentID").(string)
+	student, err := h.getMe.Run(studentID)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, httputil.HttpUnauthorizedErr{
 			Message: err.Error(),
@@ -97,21 +100,4 @@ func (h *Handler) GetMe(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, NewHttpStudent(student))
-}
-
-func getAuthToken(c echo.Context) string {
-	cookieToken, err := c.Cookie("access_token")
-	if err != nil {
-		if authToken := c.Request().Header.Get("Authorization"); authToken != "" {
-			return authToken
-		}
-
-		return ""
-	}
-
-	if cookieToken.Value != "" {
-		return cookieToken.Value
-	}
-
-	return ""
 }

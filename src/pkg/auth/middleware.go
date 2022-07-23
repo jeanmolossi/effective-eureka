@@ -46,6 +46,16 @@ func Middleware(db *gorm.DB) echo.MiddlewareFunc {
 				})
 			}
 
+			studentID, sessionID, err := Decode(tokenStr)
+			if err != nil {
+				return c.JSON(http.StatusForbidden, httputil.HttpForbiddenErr{
+					Message: "Invalid authentication",
+				})
+			}
+
+			c.Set("studentID", studentID)
+			c.Set("sessionID", sessionID)
+
 			return next(c)
 		}
 	}
