@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/jeanmolossi/effective-eureka/src/core/lessons/facade"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/factory"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/input"
@@ -19,6 +20,8 @@ type Handler struct {
 	editSectionInfo       domain.EditSectionInfo
 	getSectionsFromModule domain.GetSectionsFromModule
 
+	getLessonsInSection facade.GetLessonsInSection
+
 	logger logger.Logger
 }
 
@@ -28,10 +31,14 @@ func NewHandler(db *gorm.DB) *Handler {
 	editSectionInfo := usecase.NewEditSectionInfo(repo)
 	getSectionsFromModule := usecase.NewGetSectionsFromModule(repo)
 
+	getLessonsInSection := facade.NewGetLessonsInSection(db)
+
 	return &Handler{
 		createSectionInModule,
 		editSectionInfo,
 		getSectionsFromModule,
+
+		getLessonsInSection,
 
 		logger.NewLogger(),
 	}
@@ -158,4 +165,36 @@ func (h *Handler) GetSectionsFromModule(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, httpSections)
+}
+
+// GetSectionLessons is a function to get section lessons.
+//
+// @summary Get lessons from section
+// @description Get lessons from section
+// @tags sections
+// @accept json
+// @produce json
+// @param sectionID path string true "Section ID"
+// @success 200 {array} HttpLessonOk
+// @failure 400 {object} httputil.HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /section/{sectionID}/lessons [get]
+func (h *Handler) GetSectionLessons(c echo.Context) error {
+	sectionID := c.Param("sectionID")
+
+	if sectionID == "" {
+		return ErrorHandler(c, domain.NewBadRequestErr(
+			errors.New("sectionID is required"),
+		))
+	}
+
+	lessons, err := h.getLessonsInSection.Run(sectionID)
+	if err != nil {
+		return ErrorHandler(c, err)
+	}
+
+	return c.JSON(http.StatusOK, lessons)
 }

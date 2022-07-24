@@ -57,6 +57,7 @@ func RunServer() {
 	e.POST("/module/:moduleID/section", sech.CreateSectionInModule)
 	e.PUT("/section/:sectionID", sech.EditSectionInfo)
 	e.GET("/module/:moduleID/sections", sech.GetSectionsFromModule)
+	e.GET("/section/:sectionID/lessons", sech.GetSectionLessons)
 
 	// Lessons
 	lh := lessonsHandler.NewHandler(dbConn.DB())

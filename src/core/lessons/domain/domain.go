@@ -33,6 +33,10 @@ type EditLessonInfo interface {
 	EditLesson(lesson Lesson) (Lesson, error)
 }
 
+type GetLessonsInSection interface {
+	Run(sectionID string) ([]Lesson, error)
+}
+
 type LessonUpdater func(lesson Lesson) (Lesson, error)
 
 type LessonRepository interface {

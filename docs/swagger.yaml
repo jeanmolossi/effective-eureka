@@ -1048,6 +1048,47 @@ paths:
       summary: Create a lesson
       tags:
       - lessons
+  /section/{sectionID}/lessons:
+    get:
+      consumes:
+      - application/json
+      description: Get lessons from section
+      parameters:
+      - description: Section ID
+        in: path
+        name: sectionID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handler.HttpLessonOk'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
+      summary: Get lessons from section
+      tags:
+      - sections
   /students/me:
     get:
       consumes:
