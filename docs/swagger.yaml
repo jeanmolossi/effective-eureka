@@ -92,6 +92,42 @@ definitions:
           $ref: '#/definitions/shared.FieldError'
         type: array
     type: object
+  handler.HttpLessonCreated:
+    properties:
+      lesson_description:
+        example: Effective Eureka is a lesson about Go.
+        type: string
+      lesson_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        type: string
+      lesson_published:
+        example: false
+        type: boolean
+      lesson_thumbnail:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
+        type: string
+      lesson_title:
+        example: Effective Eureka
+        type: string
+    type: object
+  handler.HttpLessonOk:
+    properties:
+      lesson_description:
+        example: Effective Eureka is a lesson about Go.
+        type: string
+      lesson_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        type: string
+      lesson_published:
+        example: false
+        type: boolean
+      lesson_thumbnail:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
+        type: string
+      lesson_title:
+        example: Effective Eureka
+        type: string
+    type: object
   handler.HttpModuleCreated:
     properties:
       course_id:
@@ -252,6 +288,28 @@ definitions:
     required:
     - title
     type: object
+  input.CreateLesson:
+    properties:
+      description:
+        example: Lesson 1 description
+        maxLength: 255
+        type: string
+      index:
+        example: 1
+        type: integer
+      published:
+        example: true
+        type: boolean
+      thumbnail:
+        example: https://example.com/thumbnail.png
+        type: string
+      title:
+        example: Lesson 1
+        maxLength: 255
+        type: string
+    required:
+    - title
+    type: object
   input.CreateModule:
     properties:
       description:
@@ -300,6 +358,31 @@ definitions:
         example: Effective Eureka
         maxLength: 255
         type: string
+    type: object
+  input.EditLessonInfo:
+    properties:
+      description:
+        example: Lesson 1 description
+        maxLength: 255
+        type: string
+      index:
+        example: 1
+        type: integer
+      published:
+        example: true
+        type: boolean
+      section_id:
+        example: affec47d-e496-48ed-a6d8-78a57177a752
+        type: string
+      thumbnail:
+        example: https://example.com/thumbnail.png
+        type: string
+      title:
+        example: Lesson 1
+        maxLength: 255
+        type: string
+    required:
+    - title
     type: object
   input.EditModuleInfo:
     properties:
@@ -634,6 +717,51 @@ paths:
       summary: Module retrieval
       tags:
       - modules
+  /lesson/{lessonID}:
+    put:
+      consumes:
+      - application/json
+      description: Edit a lesson
+      parameters:
+      - description: Lesson
+        in: body
+        name: lesson
+        required: true
+        schema:
+          $ref: '#/definitions/input.EditLessonInfo'
+      - description: Lesson ID
+        in: path
+        name: lessonID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpLessonOk'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
+      summary: Edit a lesson
+      tags:
+      - lessons
   /module/{moduleID}:
     get:
       consumes:
@@ -757,6 +885,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
       summary: Create a section in module
       tags:
       - sections
@@ -796,6 +926,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
       summary: Get sections from module
       tags:
       - sections
@@ -866,9 +998,56 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
       summary: Edit a section
       tags:
       - sections
+  /section/{sectionID}/lesson:
+    post:
+      consumes:
+      - application/json
+      description: Create a lesson
+      parameters:
+      - description: Lesson
+        in: body
+        name: lesson
+        required: true
+        schema:
+          $ref: '#/definitions/input.CreateLesson'
+      - description: Section ID
+        in: path
+        name: sectionID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.HttpLessonCreated'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
+      summary: Create a lesson
+      tags:
+      - lessons
   /students/me:
     get:
       consumes:

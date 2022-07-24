@@ -51,6 +51,7 @@ func NewHandler(db *gorm.DB) *Handler {
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
 // @failure 404 {object} httputil.HttpNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
 // @router /module/{moduleID}/section [post]
 func (h *Handler) CreateSectionInModule(c echo.Context) error {
 	input := new(input.CreateSection)
@@ -93,6 +94,7 @@ func (h *Handler) CreateSectionInModule(c echo.Context) error {
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
 // @failure 404 {object} httputil.HttpNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
 // @router /section/{sectionID} [put]
 func (h *Handler) EditSectionInfo(c echo.Context) error {
 	input := new(input.EditSection)
@@ -134,6 +136,7 @@ func (h *Handler) EditSectionInfo(c echo.Context) error {
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
 // @failure 404 {object} httputil.HttpNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
 // @router /module/{moduleID}/sections [get]
 func (h *Handler) GetSectionsFromModule(c echo.Context) error {
 	moduleID := c.Param("moduleID")

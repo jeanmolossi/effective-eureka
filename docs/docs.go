@@ -435,6 +435,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/lesson/{lessonID}": {
+            "put": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Edit a lesson",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lessons"
+                ],
+                "summary": "Edit a lesson",
+                "parameters": [
+                    {
+                        "description": "Lesson",
+                        "name": "lesson",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.EditLessonInfo"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Lesson ID",
+                        "name": "lessonID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpLessonOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/module/{moduleID}": {
             "get": {
                 "security": [
@@ -566,6 +636,11 @@ const docTemplate = `{
         },
         "/module/{moduleID}/section": {
             "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Create a section in module",
                 "consumes": [
                     "application/json"
@@ -631,6 +706,11 @@ const docTemplate = `{
         },
         "/module/{moduleID}/sections": {
             "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Get sections from module",
                 "consumes": [
                     "application/json"
@@ -731,6 +811,11 @@ const docTemplate = `{
         },
         "/section/{sectionID}": {
             "put": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
                 "description": "Edit a section",
                 "consumes": [
                     "application/json"
@@ -765,6 +850,76 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handler.HttpSectionOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/{sectionID}/lesson": {
+            "post": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Create a lesson",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lessons"
+                ],
+                "summary": "Create a lesson",
+                "parameters": [
+                    {
+                        "description": "Lesson",
+                        "name": "lesson",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.CreateLesson"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Section ID",
+                        "name": "sectionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpLessonCreated"
                         }
                     },
                     "400": {
@@ -1023,6 +1178,56 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.HttpLessonCreated": {
+            "type": "object",
+            "properties": {
+                "lesson_description": {
+                    "type": "string",
+                    "example": "Effective Eureka is a lesson about Go."
+                },
+                "lesson_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "lesson_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "lesson_thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
+                },
+                "lesson_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "handler.HttpLessonOk": {
+            "type": "object",
+            "properties": {
+                "lesson_description": {
+                    "type": "string",
+                    "example": "Effective Eureka is a lesson about Go."
+                },
+                "lesson_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
+                },
+                "lesson_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "lesson_thumbnail": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
+                },
+                "lesson_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
+                }
+            }
+        },
         "handler.HttpModuleCreated": {
             "type": "object",
             "properties": {
@@ -1250,6 +1455,36 @@ const docTemplate = `{
                 }
             }
         },
+        "input.CreateLesson": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Lesson 1 description"
+                },
+                "index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "example": "https://example.com/thumbnail.png"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Lesson 1"
+                }
+            }
+        },
         "input.CreateModule": {
             "type": "object",
             "required": [
@@ -1314,6 +1549,40 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "example": "Effective Eureka"
+                }
+            }
+        },
+        "input.EditLessonInfo": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Lesson 1 description"
+                },
+                "index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "section_id": {
+                    "type": "string",
+                    "example": "affec47d-e496-48ed-a6d8-78a57177a752"
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "example": "https://example.com/thumbnail.png"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Lesson 1"
                 }
             }
         },
