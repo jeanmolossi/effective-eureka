@@ -670,6 +670,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/section/{sectionID}": {
+            "put": {
+                "description": "Edit a section",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sections"
+                ],
+                "summary": "Edit a section",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Section ID",
+                        "name": "sectionID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Section data",
+                        "name": "section",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/input.EditSection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpSectionOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            }
+        },
         "/students/me": {
             "get": {
                 "security": [
@@ -986,6 +1051,35 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.HttpSectionOk": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string",
+                    "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f515"
+                },
+                "module_id": {
+                    "type": "string",
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
+                },
+                "section_id": {
+                    "type": "string",
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
+                },
+                "section_index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "section_published": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "section_title": {
+                    "type": "string",
+                    "example": "Effective Eureka"
+                }
+            }
+        },
         "handler.HttpStudentForbiddenErr": {
             "type": "object",
             "properties": {
@@ -1183,6 +1277,31 @@ const docTemplate = `{
                 "thumbnail": {
                     "type": "string",
                     "example": "https://example.com/thumbnail.png"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Effective Eureka"
+                }
+            }
+        },
+        "input.EditSection": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "module_id": {
+                    "type": "string",
+                    "example": "4aa77560-9c90-4128-b308-ad5c0515b5d7"
+                },
+                "published": {
+                    "type": "boolean",
+                    "example": true
                 },
                 "title": {
                     "type": "string",

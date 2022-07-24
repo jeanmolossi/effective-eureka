@@ -99,6 +99,21 @@ func (s *sectionRepository) Create(section domain.Section) (domain.Section, erro
 
 // Edit updates a section in a module
 func (s *sectionRepository) Edit(section domain.Section, updater domain.SectionUpdater) (domain.Section, error) {
+	var courseID string
+	var issetModule bool
+	// can not edit section is has no module
+	if courseID, issetModule = s.IssetModule(section.GetModuleID()); !issetModule {
+		return nil, domain.NewNotFoundErr(errors.New("module not found"))
+	}
+
+	// can not edit section is has no parent module course
+	if courseID == "" {
+		return nil, domain.NewNotFoundErr(errors.New("course module parent not found"))
+	}
+
+	// auto set course ID by module
+	section.SetCourseID(courseID)
+
 	currentSection, err := s.GetByID(section.GetSectionID())
 	if err != nil {
 		return nil, err
@@ -106,6 +121,12 @@ func (s *sectionRepository) Edit(section domain.Section, updater domain.SectionU
 
 	if currentSection == nil {
 		return nil, domain.NewNotFoundErr(errors.New("section not found"))
+	}
+
+	if currentSection.GetCourseID() != section.GetCourseID() {
+		return nil, domain.NewUnauthorizedErr(
+			errors.New("can not change section between courses"),
+		)
 	}
 
 	updatedSection, err := updater(currentSection)

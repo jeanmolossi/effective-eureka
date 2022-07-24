@@ -1,10 +1,14 @@
 // Package factory is used to create modules providing the necessary dependencies.
 package factory
 
-import "github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+import (
+	"time"
+
+	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+)
 
 type Section interface {
-	CreateSection(moduleID, title string, index uint16, published bool) Section
+	CreateSection(moduleID, title string, index uint16, published bool, createdAt, updatedAt *time.Time) Section
 	WithID(sectionID string) Section
 	WithCourseID(courseID string) Section
 	Build() domain.Section
@@ -20,15 +24,27 @@ func NewSection() Section {
 	}
 }
 
-func (s *section) CreateSection(moduleID, title string, index uint16, published bool) Section {
-	s.Section.SetModuleID(moduleID)
-	s.Section.SetTitle(title)
-	s.Section.SetIndex(index)
-
-	if published {
-		s.Section.Publish()
+func (s *section) CreateSection(moduleID, title string, index uint16, published bool, createdAt, updatedAt *time.Time) Section {
+	if createdAt != nil && updatedAt != nil {
+		s.Section = domain.NewSection(
+			moduleID,
+			"",
+			title,
+			index,
+			published,
+			createdAt,
+			updatedAt,
+		)
 	} else {
-		s.Section.Unpublish()
+		s.Section.SetModuleID(moduleID)
+		s.Section.SetTitle(title)
+		s.Section.SetIndex(index)
+
+		if published {
+			s.Section.Publish()
+		} else {
+			s.Section.Unpublish()
+		}
 	}
 
 	return s

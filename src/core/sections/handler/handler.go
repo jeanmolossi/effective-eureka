@@ -15,6 +15,7 @@ import (
 
 type Handler struct {
 	createSectionInModule domain.CreateSectionInModule
+	editSectionInfo       domain.EditSectionInfo
 
 	logger logger.Logger
 }
@@ -22,9 +23,11 @@ type Handler struct {
 func NewHandler(db *gorm.DB) *Handler {
 	repo := repository.NewSectionRepository(db)
 	createSectionInModule := usecase.NewCreateSectionInModule(repo)
+	editSectionInfo := usecase.NewEditSectionInfo(repo)
 
 	return &Handler{
 		createSectionInModule,
+		editSectionInfo,
 
 		logger.NewLogger(),
 	}
@@ -61,6 +64,7 @@ func (h *Handler) CreateSectionInModule(c echo.Context) error {
 		input.Title,
 		input.Index,
 		input.Published,
+		nil, nil,
 	)
 
 	createdSection, err := h.createSectionInModule.Run(section.Build())
@@ -68,5 +72,47 @@ func (h *Handler) CreateSectionInModule(c echo.Context) error {
 		return ErrorHandler(c, err)
 	}
 
-	return c.JSON(http.StatusCreated, NewHttpModuleCreated(createdSection))
+	return c.JSON(http.StatusCreated, NewHttpSectionCreated(createdSection))
+}
+
+// EditSection is a function to edit a section.
+//
+// @summary Edit a section
+// @description Edit a section
+// @tags sections
+// @accept json
+// @produce json
+// @param sectionID path string true "Section ID"
+// @param section body input.EditSection true "Section data"
+// @success 200 {object} HttpSectionOk
+// @failure 400 {object} httputil.HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /section/{sectionID} [put]
+func (h *Handler) EditSectionInfo(c echo.Context) error {
+	input := new(input.EditSection)
+
+	if err := c.Bind(input); err != nil {
+		return ErrorHandler(c, err)
+	}
+
+	if err := c.Validate(input); err != nil {
+		return ErrorHandler(c, err)
+	}
+
+	section := factory.NewSection().CreateSection(
+		input.ModuleID,
+		input.Title,
+		input.Index,
+		input.Published,
+		nil, nil,
+	)
+
+	editedSection, err := h.editSectionInfo.Run(section.Build())
+	if err != nil {
+		return ErrorHandler(c, err)
+	}
+
+	return c.JSON(http.StatusOK, NewHttpSectionOk(editedSection))
 }

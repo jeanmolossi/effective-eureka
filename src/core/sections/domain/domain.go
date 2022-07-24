@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 // Section is a domain section
 type Section interface {
 	// GetModuleID returns the module ID
@@ -14,6 +16,8 @@ type Section interface {
 	GetTitle() string
 	// IsPublished returns true if the section is published
 	IsPublished() bool
+	// GetTimestamps returns the section timestamps
+	GetTimestamps() (createdAt, updatedAt *time.Time)
 
 	// SetModuleID sets the module ID
 	SetModuleID(moduleID string)

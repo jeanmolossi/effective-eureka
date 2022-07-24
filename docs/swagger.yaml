@@ -155,6 +155,27 @@ definitions:
         example: Effective Eureka
         type: string
     type: object
+  handler.HttpSectionOk:
+    properties:
+      course_id:
+        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f515
+        type: string
+      module_id:
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
+        type: string
+      section_id:
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
+        type: string
+      section_index:
+        example: 1
+        type: integer
+      section_published:
+        example: false
+        type: boolean
+      section_title:
+        example: Effective Eureka
+        type: string
+    type: object
   handler.HttpStudentForbiddenErr:
     properties:
       error:
@@ -299,6 +320,24 @@ definitions:
         example: Effective Eureka
         maxLength: 255
         type: string
+    type: object
+  input.EditSection:
+    properties:
+      index:
+        example: 1
+        type: integer
+      module_id:
+        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
+        type: string
+      published:
+        example: true
+        type: boolean
+      title:
+        example: Effective Eureka
+        maxLength: 255
+        type: string
+    required:
+    - title
     type: object
   input.StudentInfo:
     properties:
@@ -748,6 +787,49 @@ paths:
       summary: Ping the server.
       tags:
       - healthcheck
+  /section/{sectionID}:
+    put:
+      consumes:
+      - application/json
+      description: Edit a section
+      parameters:
+      - description: Section ID
+        in: path
+        name: sectionID
+        required: true
+        type: string
+      - description: Section data
+        in: body
+        name: section
+        required: true
+        schema:
+          $ref: '#/definitions/input.EditSection'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpSectionOk'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      summary: Edit a section
+      tags:
+      - sections
   /students/me:
     get:
       consumes:

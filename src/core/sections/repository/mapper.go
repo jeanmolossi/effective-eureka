@@ -22,6 +22,8 @@ func ModelToDomain(model *SectionModel) domain.Section {
 }
 
 func DomainToModel(section domain.Section) *SectionModel {
+	createdAt, updatedAt := section.GetTimestamps()
+
 	return &SectionModel{
 		ModuleID:         section.GetModuleID(),
 		CourseID:         section.GetCourseID(),
@@ -29,5 +31,7 @@ func DomainToModel(section domain.Section) *SectionModel {
 		SectionIndex:     section.GetIndex(),
 		SectionTitle:     section.GetTitle(),
 		SectionPublished: section.IsPublished(),
+		SectionCreatedAt: *createdAt,
+		SectionUpdatedAt: *updatedAt,
 	}
 }

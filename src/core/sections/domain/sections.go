@@ -67,6 +67,11 @@ func (s *section) IsPublished() bool {
 	return s.SectionPublished
 }
 
+// GetTimestamps returns the section timestamps
+func (s *section) GetTimestamps() (createdAt, updatedAt *time.Time) {
+	return &s.SectionCreatedAt, &s.SectionUpdatedAt
+}
+
 // SetModuleID sets the module ID
 func (s *section) SetModuleID(moduleID string) {
 	s.ModuleID = moduleID
