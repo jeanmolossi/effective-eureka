@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
@@ -16,6 +17,7 @@ import (
 type Handler struct {
 	createSectionInModule domain.CreateSectionInModule
 	editSectionInfo       domain.EditSectionInfo
+	getSectionsFromModule domain.GetSectionsFromModule
 
 	logger logger.Logger
 }
@@ -24,10 +26,12 @@ func NewHandler(db *gorm.DB) *Handler {
 	repo := repository.NewSectionRepository(db)
 	createSectionInModule := usecase.NewCreateSectionInModule(repo)
 	editSectionInfo := usecase.NewEditSectionInfo(repo)
+	getSectionsFromModule := usecase.NewGetSectionsFromModule(repo)
 
 	return &Handler{
 		createSectionInModule,
 		editSectionInfo,
+		getSectionsFromModule,
 
 		logger.NewLogger(),
 	}
@@ -115,4 +119,40 @@ func (h *Handler) EditSectionInfo(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, NewHttpSectionOk(editedSection))
+}
+
+// GetSectionsFromModule is a function to get sections from module.
+//
+// @summary Get sections from module
+// @description Get sections from module
+// @tags sections
+// @accept json
+// @produce json
+// @param moduleID path string true "Module ID"
+// @success 200 {array} HttpSectionOk
+// @failure 400 {object} httputil.HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @router /module/{moduleID}/sections [get]
+func (h *Handler) GetSectionsFromModule(c echo.Context) error {
+	moduleID := c.Param("moduleID")
+
+	if moduleID == "" {
+		return ErrorHandler(c, domain.NewBadRequestErr(
+			errors.New("moduleID is required"),
+		))
+	}
+
+	sections, err := h.getSectionsFromModule.Run(moduleID)
+	if err != nil {
+		return ErrorHandler(c, err)
+	}
+
+	httpSections := make([]*HttpSectionOk, len(sections))
+	for i, section := range sections {
+		httpSections[i] = NewHttpSectionOk(section)
+	}
+
+	return c.JSON(http.StatusOK, httpSections)
 }

@@ -39,3 +39,22 @@ func NewUnauthorizedErr(err error) *UnauthorizedErr {
 		Message: err.Error(),
 	}
 }
+
+type BadRequestErr struct {
+	// Range: 0 through 65535.
+	Code uint16 `json:"-"`
+	// The error message.
+	Message string `json:"error" example:"Bad Request"`
+}
+
+// Error returns the error message.
+func (e *BadRequestErr) Error() string {
+	return e.Message
+}
+
+func NewBadRequestErr(err error) *BadRequestErr {
+	return &BadRequestErr{
+		Code:    http.StatusBadRequest,
+		Message: err.Error(),
+	}
+}

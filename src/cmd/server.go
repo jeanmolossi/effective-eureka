@@ -55,6 +55,7 @@ func RunServer() {
 	sech := sectionsHandler.NewHandler(dbConn.DB())
 	e.POST("/module/:moduleID/section", sech.CreateSectionInModule)
 	e.PUT("/section/:sectionID", sech.EditSectionInfo)
+	e.GET("/module/:moduleID/sections", sech.GetSectionsFromModule)
 
 	// Authentication
 	ah := auth.NewHandler(dbConn.DB())

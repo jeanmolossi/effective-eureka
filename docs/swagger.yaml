@@ -760,6 +760,45 @@ paths:
       summary: Create a section in module
       tags:
       - sections
+  /module/{moduleID}/sections:
+    get:
+      consumes:
+      - application/json
+      description: Get sections from module
+      parameters:
+      - description: Module ID
+        in: path
+        name: moduleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handler.HttpSectionOk'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      summary: Get sections from module
+      tags:
+      - sections
   /ping:
     get:
       consumes:
