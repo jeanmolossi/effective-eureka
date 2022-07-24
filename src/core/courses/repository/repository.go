@@ -2,9 +2,11 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +27,12 @@ func (r *repo) GetByID(courseID string) (domain.Course, error) {
 	result := r.db.Table("courses").Where("course_id = ?", courseID).First(&CourseModel{}).Scan(model)
 
 	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, shared.NewNotFoundErr(
+				errors.New("course not found"),
+			)
+		}
+
 		return nil, fmt.Errorf("error getting course: %v", result.Error)
 	}
 

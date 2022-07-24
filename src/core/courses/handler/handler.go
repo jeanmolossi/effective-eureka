@@ -112,7 +112,7 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 	course, err := h.getCourseByID.Run(courseID)
 	if err != nil {
 		h.logger.Errorln("Error running usecase", err)
-		return c.JSON(http.StatusInternalServerError, err)
+		return ErrorHandler(c, err)
 	}
 
 	return c.JSON(http.StatusOK, NewHttpCourseOk(course))
