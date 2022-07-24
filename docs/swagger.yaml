@@ -662,7 +662,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/handler.HttpBadRequestErr'
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
         "403":
           description: Forbidden
           schema:
@@ -675,7 +675,7 @@ paths:
       - access_token: []
       summary: Module creation
       tags:
-      - modules
+      - courses
   /course/{courseID}/modules:
     get:
       consumes:

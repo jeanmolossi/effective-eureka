@@ -44,10 +44,10 @@ func RunServer() {
 	e.POST("/course", ch.CreateCourse)
 	e.GET("/course/:courseID", ch.GetCourseByID)
 	e.PUT("/course/:courseID", ch.EditCourseInfo)
+	e.POST("/course/:courseID/module", ch.CreateModule)
 
 	// Modules
 	mh := modulesHandler.NewHandler(dbConn.DB())
-	e.POST("/course/:courseID/module", mh.CreateModule)
 	e.GET("/module/:moduleID", mh.GetModule)
 	e.GET("/course/:courseID/modules", mh.GetModulesFromCourse)
 	e.PUT("/module/:moduleID", mh.EditModuleInfo)

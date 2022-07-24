@@ -322,7 +322,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "modules"
+                    "courses"
                 ],
                 "summary": "Module creation",
                 "parameters": [
@@ -353,7 +353,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/handler.HttpBadRequestErr"
+                            "$ref": "#/definitions/httputil.HttpBadRequestErr"
                         }
                     },
                     "403": {

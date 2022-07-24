@@ -4,11 +4,13 @@ package handler
 import (
 	"net/http"
 
+	"github.com/jeanmolossi/effective-eureka/src/cmd/httputil"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/factory"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/input"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/usecase"
+	"github.com/jeanmolossi/effective-eureka/src/core/modules/facade"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -20,6 +22,8 @@ type Handler struct {
 	createCourse   domain.CreateCourse
 	editCourseInfo domain.EditCourseInfo
 
+	createModule facade.CreateModule
+
 	logger logger.Logger
 }
 
@@ -30,10 +34,14 @@ func NewHandler(db *gorm.DB) *Handler {
 	createCourse := usecase.NewCreateCourse(repo)
 	editCourseInfo := usecase.NewEditCourseInfo(repo)
 
+	createModule := facade.NewCreateModule(db)
+
 	return &Handler{
 		getCourseByID,
 		createCourse,
 		editCourseInfo,
+
+		createModule,
 
 		logger.NewLogger(),
 	}
@@ -159,4 +167,47 @@ func (h *Handler) EditCourseInfo(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, NewHttpCourseOk(updatedCourse))
+}
+
+// CreateModule is a endpoint to create a module.
+//
+// @Summary Module creation
+// @tags courses
+// @description Create a module
+// @accept json
+// @produce json
+// @param module body input.CreateModule true "Module object which will be created"
+// @param courseID path string true "Course ID"
+// @success 201 {object} HttpModuleCreated
+// @failure 400 {object} httputil.HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /course/{courseID}/module [post]
+func (h *Handler) CreateModule(c echo.Context) error {
+	// Bind input with input struct we expect
+	err := c.Bind(h.createModule.Input())
+	if err != nil {
+		h.logger.Errorln("Error binding input", err)
+		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
+			Message: err.Error(),
+		})
+	}
+
+	// Validate input with input struct we expect
+	err = c.Validate(h.createModule.Input())
+	if err != nil {
+		h.logger.Errorln("Error validating input", err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	newModule, err := h.createModule.Run()
+	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
+		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, newModule)
 }

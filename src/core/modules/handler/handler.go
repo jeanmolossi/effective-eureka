@@ -43,59 +43,6 @@ func NewHandler(db *gorm.DB) *Handler {
 	}
 }
 
-// CreateModule is a endpoint to create a module.
-// @Summary Module creation
-// @tags modules
-// @description Create a module
-// @accept json
-// @produce json
-// @param module body input.CreateModule true "Module object which will be created"
-// @param courseID path string true "Course ID"
-// @success 201 {object} HttpModuleCreated
-// @failure 400 {object} HttpBadRequestErr
-// @failure 403 {object} httputil.HttpMissingAuthenticationErr
-// @failure 500 {object} httputil.HttpInternalServerErr
-// @security access_token
-// @router /course/{courseID}/module [post]
-func (h *Handler) CreateModule(c echo.Context) error {
-	input := new(input.CreateModule)
-
-	// Bind input with input struct we expect
-	err := c.Bind(input)
-	if err != nil {
-		h.logger.Errorln("Error binding input", err)
-		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
-			Message: err.Error(),
-		})
-	}
-
-	// Validate input with input struct we expect
-	err = c.Validate(input)
-	if err != nil {
-		h.logger.Errorln("Error validating input", err)
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	// Create module using factory.
-	module := factory.NewModule().CreateModule(
-		input.CourseID,
-		input.Title,
-		input.Thumbnail,
-		input.Description,
-		input.Published,
-	)
-
-	newModule, err := h.createModule.Run(module.Build())
-	if err != nil {
-		h.logger.Errorln("Error running usecase", err)
-		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
-			Message: err.Error(),
-		})
-	}
-
-	return c.JSON(http.StatusCreated, NewHttpModuleCreated(newModule))
-}
-
 // GetModule is a endpoint to get a module.
 //
 // @Summary Module retrieval
