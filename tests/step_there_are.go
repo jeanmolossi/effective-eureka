@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"log"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -34,6 +35,31 @@ func (a *ApiFeature) ThereAreAny(tableName string, data *godog.Table) error {
 			vals...,
 		)
 
+		if err := stmt.Error; err != nil {
+			log.Println("Statement err", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (a *ApiFeature) ClearDB(*godog.Scenario) error {
+	dbConn := shared.NewDbConnection()
+	err := dbConn.Connect()
+	if err != nil {
+		return err
+	}
+
+	tables := []string{
+		"lessons",
+		"sections",
+		"modules",
+		"courses",
+	}
+
+	for _, table := range tables {
+		stmt := dbConn.DB().Exec(`DELETE FROM ` + table)
 		if err := stmt.Error; err != nil {
 			return err
 		}
