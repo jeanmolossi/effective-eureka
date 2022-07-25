@@ -128,7 +128,7 @@ func (h *Handler) EditModuleInfo(c echo.Context) error {
 		return ErrorHandler(c, err)
 	}
 
-	return c.JSON(http.StatusCreated, NewHttpModuleOk(newModule))
+	return c.JSON(http.StatusOK, NewHttpModuleOk(newModule))
 }
 
 // GetModulesFromCourse is a endpoint to get all modules from a course.

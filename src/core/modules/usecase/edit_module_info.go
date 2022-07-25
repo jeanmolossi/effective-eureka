@@ -44,10 +44,12 @@ func (e *editModuleInfo) updater(newModule domain.Module) domain.ModuleUpdater {
 			currentModule.SetModuleDescription(newModule.GetModuleDescription())
 		}
 
-		if newModule.IsModulePublished() {
-			currentModule.PublishModule()
-		} else {
-			currentModule.UnpublishModule()
+		if currentModule.IsModulePublished() != newModule.IsModulePublished() {
+			if newModule.IsModulePublished() {
+				currentModule.PublishModule()
+			} else {
+				currentModule.UnpublishModule()
+			}
 		}
 
 		return currentModule, nil
