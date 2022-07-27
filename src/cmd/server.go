@@ -10,6 +10,7 @@ import (
 	coursesHandler "github.com/jeanmolossi/effective-eureka/src/core/courses/handler"
 	lessonsHandler "github.com/jeanmolossi/effective-eureka/src/core/lessons/handler"
 	modulesHandler "github.com/jeanmolossi/effective-eureka/src/core/modules/handler"
+	purchasesHandler "github.com/jeanmolossi/effective-eureka/src/core/purchases/handler"
 	sectionsHandler "github.com/jeanmolossi/effective-eureka/src/core/sections/handler"
 	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
 	studentsHandler "github.com/jeanmolossi/effective-eureka/src/core/students/handler"
@@ -35,6 +36,7 @@ func RunServer() {
 	}
 
 	// Middlewares
+	e.Use(Cors())
 	e.Use(middleware.RequestID())
 	e.Use(logger.Middleware())
 	e.Use(auth.Middleware(dbConn.DB()))
@@ -73,6 +75,10 @@ func RunServer() {
 	sh := studentsHandler.NewHandler(dbConn.DB())
 	e.POST("/students/register", sh.RegisterStudent)
 	e.GET("/students/me", sh.GetMe)
+
+	// Purchases
+	ph := purchasesHandler.NewHandler(dbConn.DB())
+	e.GET("/purchases", ph.GetPurchases)
 
 	// Routes
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
