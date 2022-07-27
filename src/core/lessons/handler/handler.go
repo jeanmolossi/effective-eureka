@@ -8,6 +8,7 @@ import (
 	"github.com/jeanmolossi/effective-eureka/src/core/lessons/input"
 	"github.com/jeanmolossi/effective-eureka/src/core/lessons/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/lessons/usecase"
+	shared "github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -48,11 +49,11 @@ func (h *Handler) CreateLesson(c echo.Context) error {
 	input := new(input.CreateLesson)
 
 	if err := c.Bind(input); err != nil {
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	if err := c.Validate(input); err != nil {
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	lesson := factory.NewLesson().CreateLesson(
@@ -66,7 +67,7 @@ func (h *Handler) CreateLesson(c echo.Context) error {
 
 	newLesson, err := h.addLessonInSection.AddLesson(lesson.Build())
 	if err != nil {
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	return c.JSON(http.StatusCreated, NewHttpLessonCreated(newLesson))
@@ -92,11 +93,11 @@ func (h *Handler) EditLessonInfo(c echo.Context) error {
 	input := new(input.EditLessonInfo)
 
 	if err := c.Bind(input); err != nil {
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	if err := c.Validate(input); err != nil {
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	lesson := factory.NewLesson().CreateLesson(
@@ -110,7 +111,7 @@ func (h *Handler) EditLessonInfo(c echo.Context) error {
 
 	updatedLesson, err := h.editLesson.EditLesson(lesson.Build())
 	if err != nil {
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	return c.JSON(http.StatusOK, NewHttpLessonOk(updatedLesson))
