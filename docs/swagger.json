@@ -797,6 +797,70 @@
                 }
             }
         },
+        "/purchases": {
+            "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Get sells",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchases"
+                ],
+                "summary": "Get sells",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Transaction",
+                        "name": "transaction",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpPurchasesOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/section/{sectionID}": {
             "put": {
                 "security": [
@@ -1129,6 +1193,19 @@
                 }
             }
         },
+        "handler.HttpBuyer": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "olga.dev@email.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Olga Doutel Frade"
+                }
+            }
+        },
         "handler.HttpCourseByIDBadRequestErr": {
             "type": "object",
             "properties": {
@@ -1335,6 +1412,61 @@
                 "module_title": {
                     "type": "string",
                     "example": "Effective Eureka"
+                }
+            }
+        },
+        "handler.HttpProduct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1564852
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Product02"
+                }
+            }
+        },
+        "handler.HttpPurchase": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "COMPLETE"
+                },
+                "transaction": {
+                    "type": "string",
+                    "example": "HP17715690036011"
+                },
+                "warranty_expire_date": {
+                    "type": "integer",
+                    "example": 1625022000000
+                }
+            }
+        },
+        "handler.HttpPurchasesItem": {
+            "type": "object",
+            "properties": {
+                "buyer": {
+                    "$ref": "#/definitions/handler.HttpBuyer"
+                },
+                "product": {
+                    "$ref": "#/definitions/handler.HttpProduct"
+                },
+                "purchase": {
+                    "$ref": "#/definitions/handler.HttpPurchase"
+                }
+            }
+        },
+        "handler.HttpPurchasesOk": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.HttpPurchasesItem"
+                    }
                 }
             }
         },

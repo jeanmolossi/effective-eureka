@@ -23,6 +23,15 @@ definitions:
           $ref: '#/definitions/shared.FieldError'
         type: array
     type: object
+  handler.HttpBuyer:
+    properties:
+      email:
+        example: olga.dev@email.com
+        type: string
+      name:
+        example: Olga Doutel Frade
+        type: string
+    type: object
   handler.HttpCourseByIDBadRequestErr:
     properties:
       error:
@@ -169,6 +178,43 @@ definitions:
       module_title:
         example: Effective Eureka
         type: string
+    type: object
+  handler.HttpProduct:
+    properties:
+      id:
+        example: 1564852
+        type: integer
+      name:
+        example: Product02
+        type: string
+    type: object
+  handler.HttpPurchase:
+    properties:
+      status:
+        example: COMPLETE
+        type: string
+      transaction:
+        example: HP17715690036011
+        type: string
+      warranty_expire_date:
+        example: 1625022000000
+        type: integer
+    type: object
+  handler.HttpPurchasesItem:
+    properties:
+      buyer:
+        $ref: '#/definitions/handler.HttpBuyer'
+      product:
+        $ref: '#/definitions/handler.HttpProduct'
+      purchase:
+        $ref: '#/definitions/handler.HttpPurchase'
+    type: object
+  handler.HttpPurchasesOk:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handler.HttpPurchasesItem'
+        type: array
     type: object
   handler.HttpSectionCreated:
     properties:
@@ -958,6 +1004,47 @@ paths:
       summary: Ping the server.
       tags:
       - healthcheck
+  /purchases:
+    get:
+      consumes:
+      - application/json
+      description: Get sells
+      parameters:
+      - description: Transaction
+        in: query
+        name: transaction
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpPurchasesOk'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - access_token: []
+      summary: Get sells
+      tags:
+      - purchases
   /section/{sectionID}:
     put:
       consumes:
