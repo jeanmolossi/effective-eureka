@@ -3,6 +3,8 @@
 // That package is the course domain.
 package domain
 
+import "github.com/jeanmolossi/effective-eureka/src/core/shared"
+
 // Course is a interface who provides methods to manage courses.
 type Course interface {
 	// GetCourseID returns the course ID.
@@ -72,6 +74,8 @@ type CourseRepository interface {
 	GetByID(courseID string) (Course, error)
 	// GetByStudentID returns a list of courses from a student.
 	GetByStudentID(studentID string) ([]Course, error)
+	// GetCourses returns a list of courses.
+	GetCourses(filters shared.FilterConditions) ([]Course, error)
 	// Create creates a new course.
 	Create(course Course) (Course, error)
 	// EditInfo edits the course info.

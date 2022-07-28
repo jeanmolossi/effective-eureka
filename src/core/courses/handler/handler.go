@@ -11,6 +11,7 @@ import (
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/usecase"
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/facade"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ type Handler struct {
 	getCourseByID  domain.GetCourseByID
 	createCourse   domain.CreateCourse
 	editCourseInfo domain.EditCourseInfo
+	getCourses     domain.GetCourses
 
 	createModule facade.CreateModule
 
@@ -33,6 +35,7 @@ func NewHandler(db *gorm.DB) *Handler {
 	getCourseByID := usecase.NewGetCourseByID(repo)
 	createCourse := usecase.NewCreateCourse(repo)
 	editCourseInfo := usecase.NewEditCourseInfo(repo)
+	getCourses := usecase.NewGetCourses(repo)
 
 	createModule := facade.NewCreateModule(db)
 
@@ -40,6 +43,7 @@ func NewHandler(db *gorm.DB) *Handler {
 		getCourseByID,
 		createCourse,
 		editCourseInfo,
+		getCourses,
 
 		createModule,
 
@@ -112,7 +116,7 @@ func (h *Handler) GetCourseByID(c echo.Context) error {
 	course, err := h.getCourseByID.Run(courseID)
 	if err != nil {
 		h.logger.Errorln("Error running usecase", err)
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	return c.JSON(http.StatusOK, NewHttpCourseOk(course))
@@ -210,4 +214,43 @@ func (h *Handler) CreateModule(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, newModule)
+}
+
+// GetCourses is a endpoint to get a course list.
+//
+// @summary Course retrieval
+// @tags courses
+// @description Get a course list
+// @accept json
+// @produce json
+// @param not_published query bool false "List not published courses too"
+// @param fields query []string false "Only get that fields"
+// @success 200 {object} []HttpCourseOk
+// @failure 400 {object} HttpCourseByIDBadRequestErr
+// @failure 404 {object} HttpCourseNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /course [get]
+func (h *Handler) GetCourses(c echo.Context) error {
+	input := new(domain.GetCoursesParams)
+
+	if err := c.Bind(input); err != nil {
+		h.logger.Errorln("Error binding input", err)
+		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
+			Message: err.Error(),
+		})
+	}
+
+	courses, err := h.getCourses.Run(input)
+	if err != nil {
+		h.logger.Errorln("Error running usecase", err)
+		return shared.ErrorHandler(c, err)
+	}
+
+	httpCourses := make([]*HttpCourseOk, len(courses))
+	for i, course := range courses {
+		httpCourses[i] = NewHttpCourseOk(course)
+	}
+
+	return c.JSON(http.StatusOK, httpCourses)
 }

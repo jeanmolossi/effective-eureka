@@ -17,11 +17,11 @@ func NewHttpCourseCreated(course domain.Course) *HttpCourseCreated {
 
 // HttpCourseOk is a struct to manage the CourseOk response model.
 type HttpCourseOk struct {
-	CourseID          string `json:"course_id" example:"05d4d9d3-01a3-4fd3-8d3e-e3178522f514"`
-	CourseTitle       string `json:"course_title" example:"Effective Eureka"`
-	CourseThumbnail   string `json:"course_thumbnail" example:"https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"`
-	CourseDescription string `json:"course_description" example:"Effective Eureka is a course about Go."`
-	CoursePublished   bool   `json:"course_published" example:"false"`
+	CourseID          string `json:"course_id,omitempty" example:"05d4d9d3-01a3-4fd3-8d3e-e3178522f514"`
+	CourseTitle       string `json:"course_title,omitempty" example:"Effective Eureka"`
+	CourseThumbnail   string `json:"course_thumbnail,omitempty" example:"https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"`
+	CourseDescription string `json:"course_description,omitempty" example:"Effective Eureka is a course about Go."`
+	CoursePublished   bool   `json:"course_published,omitempty" example:"false"`
 }
 
 func NewHttpCourseOk(course domain.Course) *HttpCourseOk {

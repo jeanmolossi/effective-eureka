@@ -12,19 +12,20 @@ import (
 
 // repo implements domain.CourseRepository
 type repo struct {
-	db *gorm.DB
+	db    *gorm.DB
+	table string
 }
 
 // NewRepository is a factory method to create a repository to manage courses.
 func NewRepository(db *gorm.DB) domain.CourseRepository {
-	return &repo{db}
+	return &repo{db, "courses"}
 }
 
 // GetByID receives and course ID and query that on properly database and returns
 // the course found or nil and error if not found.
 func (r *repo) GetByID(courseID string) (domain.Course, error) {
 	model := &CourseModel{}
-	result := r.db.Table("courses").Where("course_id = ?", courseID).First(&CourseModel{}).Scan(model)
+	result := r.db.Table(r.table).Where("course_id = ?", courseID).First(&CourseModel{}).Scan(model)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -43,12 +44,46 @@ func (r *repo) GetByStudentID(studentID string) ([]domain.Course, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
+// GetCourses returns all courses.
+func (r *repo) GetCourses(filters shared.FilterConditions) ([]domain.Course, error) {
+	models := []*CourseModel{}
+
+	result := r.db.Table(r.table)
+	if filters.WithFields() {
+		result = result.Select(filters.OnlyFields(r.table))
+	}
+
+	if filters.HasConditions() {
+		statement, values := filters.Conditions()
+		result = result.Where(statement, values...)
+	}
+
+	result = result.Find(&models)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, shared.NewNotFoundErr(
+				errors.New("courses not found"),
+			)
+		}
+
+		return nil, fmt.Errorf("error getting courses: %v", result.Error)
+	}
+
+	courses := make([]domain.Course, len(models))
+	for i, model := range models {
+		courses[i] = ModelToDomain(model)
+	}
+
+	return courses, nil
+}
+
 // Create is the method who creates a course. It should returns the course created
 // else it should return nil course and creation error
 func (r *repo) Create(course domain.Course) (domain.Course, error) {
 	modelCourse := DomainToModel(course, nil, nil)
 
-	result := r.db.Table("courses").Create(modelCourse).Scan(&modelCourse)
+	result := r.db.Table(r.table).Create(modelCourse).Scan(&modelCourse)
 	if result.Error != nil {
 		return nil, fmt.Errorf("error creating course: %v", result.Error)
 	}
@@ -75,7 +110,7 @@ func (r *repo) Edit(courseID string, courseUpdater domain.CourseUpdater) (domain
 
 	model := DomainToModel(updatedCourse, nil, nil)
 	// Save course: https://gorm.io/docs/update.html#Save-All-Fields
-	result := r.db.Table("courses").Where("course_id = ?", courseID).Save(model).Scan(model)
+	result := r.db.Table(r.table).Where("course_id = ?", courseID).Save(model).Scan(model)
 
 	if result.Error != nil {
 		return nil, fmt.Errorf("error updating course: %v", result.Error)
