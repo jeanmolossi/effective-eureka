@@ -71,6 +71,15 @@ definitions:
         example: Effective Eureka
         type: string
     type: object
+  handler.HttpCoursesWithMeta:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/handler.HttpCourseOk'
+        type: array
+      meta:
+        $ref: '#/definitions/shared.HttpMeta'
+    type: object
   handler.HttpCreateCourseBadRequestErr:
     properties:
       error:
@@ -491,6 +500,21 @@ definitions:
         example: field_name is required
         type: string
     type: object
+  shared.HttpMeta:
+    properties:
+      items_per_page:
+        example: 1
+        type: integer
+      next_page:
+        example: http://localhost:8080/resource?page=3&items_per_page=1
+        type: string
+      page:
+        example: 2
+        type: integer
+      prev_page:
+        example: http://localhost:8080/resource?page=1&items_per_page=1
+        type: string
+    type: object
 info:
   contact: {}
   termsOfService: github.com/jeanmolossi/effective-eureka/terms/
@@ -590,15 +614,21 @@ paths:
           type: string
         name: fields
         type: array
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Only get that fields
+        in: query
+        name: items_per_page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/handler.HttpCourseOk'
-            type: array
+            $ref: '#/definitions/handler.HttpCoursesWithMeta'
         "400":
           description: Bad Request
           schema:

@@ -172,16 +172,25 @@ const docTemplate = `{
                         "description": "Only get that fields",
                         "name": "fields",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Only get that fields",
+                        "name": "items_per_page",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/handler.HttpCourseOk"
-                            }
+                            "$ref": "#/definitions/handler.HttpCoursesWithMeta"
                         }
                     },
                     "400": {
@@ -1338,6 +1347,20 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.HttpCoursesWithMeta": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.HttpCourseOk"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/shared.HttpMeta"
+                }
+            }
+        },
         "handler.HttpCreateCourseBadRequestErr": {
             "type": "object",
             "properties": {
@@ -1927,6 +1950,27 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "field_name is required"
+                }
+            }
+        },
+        "shared.HttpMeta": {
+            "type": "object",
+            "properties": {
+                "items_per_page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "next_page": {
+                    "type": "string",
+                    "example": "http://localhost:8080/resource?page=3\u0026items_per_page=1"
+                },
+                "page": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "prev_page": {
+                    "type": "string",
+                    "example": "http://localhost:8080/resource?page=1\u0026items_per_page=1"
                 }
             }
         }
