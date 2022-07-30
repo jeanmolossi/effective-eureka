@@ -45,7 +45,7 @@ func (r *repo) GetByStudentID(studentID string) ([]domain.Course, error) {
 }
 
 // GetCourses returns all courses.
-func (r *repo) GetCourses(filters shared.FilterConditions) ([]domain.Course, error) {
+func (r *repo) GetCourses(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Course, error) {
 	models := []*CourseModel{}
 
 	result := r.db.Table(r.table)
@@ -56,6 +56,10 @@ func (r *repo) GetCourses(filters shared.FilterConditions) ([]domain.Course, err
 	if filters.HasConditions() {
 		statement, values := filters.Conditions()
 		result = result.Where(statement, values...)
+	}
+
+	if paginator.ShouldPaginate() {
+		result = result.Scopes(paginator.Paginate)
 	}
 
 	result = result.Find(&models)

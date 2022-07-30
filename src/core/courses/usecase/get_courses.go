@@ -29,5 +29,18 @@ func (g *getCourses) Run(params *domain.GetCoursesParams) ([]domain.Course, erro
 		}
 	}
 
-	return g.repo.GetCourses(&filters)
+	paginator := repository.PagesConfig{
+		Page:         1,
+		ItemsPerPage: 10,
+	}
+
+	if params.Page > 0 {
+		paginator.Page = params.Page
+	}
+
+	if params.ItemsPerPage > 0 {
+		paginator.ItemsPerPage = params.ItemsPerPage
+	}
+
+	return g.repo.GetCourses(&filters, &paginator)
 }

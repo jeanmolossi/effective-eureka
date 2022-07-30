@@ -225,7 +225,9 @@ func (h *Handler) CreateModule(c echo.Context) error {
 // @produce json
 // @param not_published query bool false "List not published courses too"
 // @param fields query []string false "Only get that fields"
-// @success 200 {object} []HttpCourseOk
+// @param page query uint16 false "Page"
+// @param items_per_page query int false "Only get that fields"
+// @success 200 {object} HttpCoursesWithMeta
 // @failure 400 {object} HttpCourseByIDBadRequestErr
 // @failure 404 {object} HttpCourseNotFoundErr
 // @failure 500 {object} httputil.HttpInternalServerErr
@@ -252,5 +254,9 @@ func (h *Handler) GetCourses(c echo.Context) error {
 		httpCourses[i] = NewHttpCourseOk(course)
 	}
 
-	return c.JSON(http.StatusOK, httpCourses)
+	return c.JSON(http.StatusOK, NewHttpCoursesWithMeta(
+		httpCourses,
+		input.Page,
+		input.ItemsPerPage),
+	)
 }

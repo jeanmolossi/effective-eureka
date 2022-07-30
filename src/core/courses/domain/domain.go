@@ -75,7 +75,7 @@ type CourseRepository interface {
 	// GetByStudentID returns a list of courses from a student.
 	GetByStudentID(studentID string) ([]Course, error)
 	// GetCourses returns a list of courses.
-	GetCourses(filters shared.FilterConditions) ([]Course, error)
+	GetCourses(filters shared.FilterConditions, paginator shared.Paginator) ([]Course, error)
 	// Create creates a new course.
 	Create(course Course) (Course, error)
 	// EditInfo edits the course info.

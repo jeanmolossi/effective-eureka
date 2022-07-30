@@ -2,10 +2,13 @@ package shared
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // dbConnection is the database connection manager
@@ -20,7 +23,18 @@ func NewDbConnection() *dbConnection {
 
 // Connect connects to the database
 func (d *dbConnection) Connect() error {
-	db, err := gorm.Open(postgres.Open(dsn()), &gorm.Config{})
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			SlowThreshold: time.Millisecond * 200,
+			LogLevel:      logger.Info,
+			Colorful:      true,
+		},
+	)
+
+	db, err := gorm.Open(postgres.Open(dsn()), &gorm.Config{
+		Logger: newLogger,
+	})
 	if err != nil {
 		return err
 	}

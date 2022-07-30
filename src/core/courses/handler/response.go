@@ -1,6 +1,9 @@
 package handler
 
-import "github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
+import (
+	"github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+)
 
 // HttpCourseCreated is a struct to manage the CourseCreated response model.
 type HttpCourseCreated struct {
@@ -31,5 +34,19 @@ func NewHttpCourseOk(course domain.Course) *HttpCourseOk {
 		CourseThumbnail:   course.GetCourseThumb(),
 		CourseDescription: course.GetCourseDesc(),
 		CoursePublished:   course.IsCoursePublished(),
+	}
+}
+
+type HttpCoursesWithMeta struct {
+	Data []*HttpCourseOk `json:"data"`
+	Meta shared.HttpMeta `json:"meta"`
+}
+
+func NewHttpCoursesWithMeta(courses []*HttpCourseOk, page uint16, itemsPerPage int) *HttpCoursesWithMeta {
+	baseURL := "http://localhost:8080/courses"
+
+	return &HttpCoursesWithMeta{
+		Data: courses,
+		Meta: shared.GetMeta(baseURL, page, itemsPerPage, len(courses)),
 	}
 }
