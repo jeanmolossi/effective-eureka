@@ -469,6 +469,33 @@ const docTemplate = `{
                         "name": "courseID",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "List not published courses too",
+                        "name": "not_published",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Only get that fields",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Only get that fields",
+                        "name": "items_per_page",
+                        "in": "query"
                     }
                 ],
                 "responses": {

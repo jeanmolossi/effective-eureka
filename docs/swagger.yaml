@@ -804,6 +804,24 @@ paths:
         name: courseID
         required: true
         type: string
+      - description: List not published courses too
+        in: query
+        name: not_published
+        type: boolean
+      - description: Only get that fields
+        in: query
+        items:
+          type: string
+        name: fields
+        type: array
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Only get that fields
+        in: query
+        name: items_per_page
+        type: integer
       produces:
       - application/json
       responses:
