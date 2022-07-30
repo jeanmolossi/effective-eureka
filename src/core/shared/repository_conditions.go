@@ -7,6 +7,7 @@ type FilterConditions interface {
 	OnlyFields(prefix string) []string
 	HasConditions() bool
 	Conditions() (string, []interface{})
+	GetCondition(key string) (interface{}, bool)
 }
 
 type Paginator interface {

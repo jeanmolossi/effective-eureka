@@ -3,6 +3,8 @@
 // That package is the module domain.
 package domain
 
+import "github.com/jeanmolossi/effective-eureka/src/core/shared"
+
 type Module interface {
 	// GetCourseID returns parent course ID.
 	GetCourseID() string
@@ -31,12 +33,6 @@ type Module interface {
 	PublishModule()
 	// UnpublishModule unpublishes module.
 	UnpublishModule()
-}
-
-// GetModuleByID is a interface who provides methods to get a module by ID.
-type GetModuleFromCourse interface {
-	// Run is the method to get a module by ID.
-	Run(courseID string) ([]Module, error)
 }
 
 // GetModuleByID is a interface who provides methods to get a module by ID.
@@ -70,7 +66,7 @@ type ModuleRepository interface {
 	// GetByID returns a module by ID.
 	GetByID(moduleID string) (Module, error)
 	// GetByCourseID returns a list of modules by course ID.
-	GetByCourseID(courseID string) ([]Module, error)
+	GetByCourseID(filters shared.FilterConditions, paginator shared.Paginator) ([]Module, error)
 	// Create creates a new module.
 	Create(module Module) (Module, error)
 	// Edit updates a module.

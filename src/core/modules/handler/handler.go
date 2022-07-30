@@ -10,6 +10,7 @@ import (
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/input"
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/repository"
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/usecase"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -70,9 +71,7 @@ func (h *Handler) GetModule(c echo.Context) error {
 	module, err := h.getModuleByID.Run(moduleID)
 	if err != nil {
 		h.logger.Errorln("Error running usecase", err)
-		return c.JSON(http.StatusNotFound, httputil.HttpNotFoundErr{
-			Message: err.Error(),
-		})
+		return shared.ErrorHandler(c, err)
 	}
 
 	return c.JSON(http.StatusOK, NewHttpModuleOk(module))
@@ -101,16 +100,14 @@ func (h *Handler) EditModuleInfo(c echo.Context) error {
 	err := c.Bind(input)
 	if err != nil {
 		h.logger.Errorln("Error binding input", err)
-		return c.JSON(http.StatusInternalServerError, httputil.HttpInternalServerErr{
-			Message: err.Error(),
-		})
+		return shared.ErrorHandler(c, err)
 	}
 
 	// Validate input with input struct we expect
 	err = c.Validate(input)
 	if err != nil {
 		h.logger.Errorln("Error validating input", err)
-		return c.JSON(http.StatusBadRequest, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	// Create module using factory.
@@ -125,7 +122,7 @@ func (h *Handler) EditModuleInfo(c echo.Context) error {
 	newModule, err := h.editModuleInfo.Run(module.Build())
 	if err != nil {
 		h.logger.Errorln("Error running usecase", err)
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	return c.JSON(http.StatusOK, NewHttpModuleOk(newModule))
@@ -139,6 +136,10 @@ func (h *Handler) EditModuleInfo(c echo.Context) error {
 // @accept json
 // @produce json
 // @param courseID path string true "Course ID"
+// @param not_published query bool false "List not published courses too"
+// @param fields query []string false "Only get that fields"
+// @param page query uint16 false "Page"
+// @param items_per_page query int false "Only get that fields"
 // @success 200 {array} HttpModuleOk
 // @failure 400 {object} HttpBadRequestErr
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
@@ -147,18 +148,21 @@ func (h *Handler) EditModuleInfo(c echo.Context) error {
 // @security access_token
 // @router /course/{courseID}/modules [get]
 func (h *Handler) GetModulesFromCourse(c echo.Context) error {
-	courseID := c.Param("courseID")
-
-	if courseID == "" {
-		return c.JSON(http.StatusBadRequest, httputil.HttpBadRequestErr{
-			Message: "course id is required",
-		})
+	input := new(domain.GetModulesParams)
+	if err := c.Bind(input); err != nil {
+		h.logger.Errorln("Error binding", err)
+		return shared.ErrorHandler(c, err)
 	}
 
-	modules, err := h.getModulesFromCourse.Run(courseID)
+	if err := c.Validate(input); err != nil {
+		h.logger.Errorln("Error validating", err)
+		return shared.ErrorHandler(c, err)
+	}
+
+	modules, err := h.getModulesFromCourse.Run(input)
 	if err != nil {
 		h.logger.Errorln("Error running usecase", err)
-		return ErrorHandler(c, err)
+		return shared.ErrorHandler(c, err)
 	}
 
 	httpModules := make([]*HttpModuleOk, len(modules))
@@ -166,5 +170,8 @@ func (h *Handler) GetModulesFromCourse(c echo.Context) error {
 		httpModules[i] = NewHttpModuleOk(module)
 	}
 
-	return c.JSON(http.StatusOK, httpModules)
+	return c.JSON(http.StatusOK, NewHttpModulesWithMeta(
+		httpModules,
+		input),
+	)
 }

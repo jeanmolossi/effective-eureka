@@ -1,6 +1,11 @@
 package handler
 
-import "github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
+import (
+	"fmt"
+
+	"github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+)
 
 // HttpOkWithMessage returns a 201 response with a message
 type HttpModuleCreated struct {
@@ -41,5 +46,19 @@ func NewHttpModuleOk(module domain.Module) *HttpModuleOk {
 		ModuleDescription: module.GetModuleDescription(),
 		ModuleThumbnail:   module.GetModuleThumb(),
 		ModulePublished:   module.IsModulePublished(),
+	}
+}
+
+type HttpModulesWithMeta struct {
+	Data []*HttpModuleOk `json:"data"`
+	Meta shared.HttpMeta `json:"meta"`
+}
+
+func NewHttpModulesWithMeta(modules []*HttpModuleOk, input *domain.GetModulesParams) *HttpModulesWithMeta {
+	baseURL := fmt.Sprintf("http://localhost:8080/course/%s/modules", input.CourseID)
+
+	return &HttpModulesWithMeta{
+		Data: modules,
+		Meta: shared.GetMeta(baseURL, input.Page, input.ItemsPerPage, len(modules)),
 	}
 }

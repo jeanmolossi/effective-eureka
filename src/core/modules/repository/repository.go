@@ -2,7 +2,10 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"gorm.io/gorm"
 )
 
@@ -43,13 +46,34 @@ func (r *moduleRepository) GetByID(moduleID string) (domain.Module, error) {
 }
 
 // GetByCourseID returns a list of modules by course ID.
-func (r *moduleRepository) GetByCourseID(courseID string) ([]domain.Module, error) {
-	if !r.IssetCourseID(courseID) {
+func (r *moduleRepository) GetByCourseID(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Module, error) {
+	courseID, hasCondition := filters.GetCondition("course_id")
+
+	if !hasCondition {
+		return nil, fmt.Errorf("course_id is required")
+	}
+
+	if !r.IssetCourseID(courseID.(string)) {
 		return nil, gorm.ErrRecordNotFound
 	}
 
 	models := []*ModuleModel{}
-	result := r.db.Table(r.table).Where("course_id = ?", courseID).Find(&models)
+
+	result := r.db.Table(r.table)
+	if filters.WithFields() {
+		result = result.Select(filters.OnlyFields(r.table))
+	}
+
+	if filters.HasConditions() {
+		statement, values := filters.Conditions()
+		result = result.Where(statement, values...)
+	}
+
+	if paginator.ShouldPaginate() {
+		result = result.Scopes(paginator.Paginate)
+	}
+
+	result.Find(&models)
 	if result.Error != nil {
 		return nil, result.Error
 	}
