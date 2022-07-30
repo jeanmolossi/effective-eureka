@@ -46,17 +46,31 @@ func (_m *FilterConditions) HasConditions() bool {
 	return r0
 }
 
-// OnlyFields provides a mock function with given fields: fields
-func (_m *FilterConditions) OnlyFields(fields []string) []string {
-	ret := _m.Called(fields)
+// OnlyFields provides a mock function with given fields: prefix
+func (_m *FilterConditions) OnlyFields(prefix string) []string {
+	ret := _m.Called(prefix)
 
 	var r0 []string
-	if rf, ok := ret.Get(0).(func([]string) []string); ok {
-		r0 = rf(fields)
+	if rf, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = rf(prefix)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
+	}
+
+	return r0
+}
+
+// WithFields provides a mock function with given fields:
+func (_m *FilterConditions) WithFields() bool {
+	ret := _m.Called()
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
 	}
 
 	return r0

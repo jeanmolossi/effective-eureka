@@ -106,13 +106,13 @@ func (_m *CourseRepository) GetByStudentID(studentID string) ([]domain.Course, e
 	return r0, r1
 }
 
-// GetCourses provides a mock function with given fields: filters
-func (_m *CourseRepository) GetCourses(filters shared.FilterConditions) ([]domain.Course, error) {
-	ret := _m.Called(filters)
+// GetCourses provides a mock function with given fields: filters, paginator
+func (_m *CourseRepository) GetCourses(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Course, error) {
+	ret := _m.Called(filters, paginator)
 
 	var r0 []domain.Course
-	if rf, ok := ret.Get(0).(func(shared.FilterConditions) []domain.Course); ok {
-		r0 = rf(filters)
+	if rf, ok := ret.Get(0).(func(shared.FilterConditions, shared.Paginator) []domain.Course); ok {
+		r0 = rf(filters, paginator)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.Course)
@@ -120,8 +120,8 @@ func (_m *CourseRepository) GetCourses(filters shared.FilterConditions) ([]domai
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(shared.FilterConditions) error); ok {
-		r1 = rf(filters)
+	if rf, ok := ret.Get(1).(func(shared.FilterConditions, shared.Paginator) error); ok {
+		r1 = rf(filters, paginator)
 	} else {
 		r1 = ret.Error(1)
 	}

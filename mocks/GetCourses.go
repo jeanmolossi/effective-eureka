@@ -12,13 +12,13 @@ type GetCourses struct {
 	mock.Mock
 }
 
-// Run provides a mock function with given fields:
-func (_m *GetCourses) Run() ([]domain.Course, error) {
-	ret := _m.Called()
+// Run provides a mock function with given fields: conditions
+func (_m *GetCourses) Run(conditions *domain.GetCoursesParams) ([]domain.Course, error) {
+	ret := _m.Called(conditions)
 
 	var r0 []domain.Course
-	if rf, ok := ret.Get(0).(func() []domain.Course); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(*domain.GetCoursesParams) []domain.Course); ok {
+		r0 = rf(conditions)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.Course)
@@ -26,8 +26,8 @@ func (_m *GetCourses) Run() ([]domain.Course, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(*domain.GetCoursesParams) error); ok {
+		r1 = rf(conditions)
 	} else {
 		r1 = ret.Error(1)
 	}
