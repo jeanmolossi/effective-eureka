@@ -35,12 +35,6 @@ type Section interface {
 	Unpublish()
 }
 
-// GetSectionsFromModule returns the sections from a module
-type GetSectionsFromModule interface {
-	// Run execute usecase to get sections from module
-	Run(moduleID string) ([]Section, error)
-}
-
 // CreateSectionInModule creates a section in a module
 type CreateSectionInModule interface {
 	// Run execute usecase to create section in module
