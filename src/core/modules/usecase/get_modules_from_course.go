@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
-	"github.com/jeanmolossi/effective-eureka/src/core/modules/repository"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 )
 
 type getModulesFromCourse struct {
@@ -15,7 +15,7 @@ func NewGetModuleFromCourse(repo domain.ModuleRepository) domain.GetModuleFromCo
 
 // Run is the method to get a module by ID.
 func (g *getModulesFromCourse) Run(params *domain.GetModulesParams) ([]domain.Module, error) {
-	filters := repository.Filters{
+	filters := shared.Filters{
 		ConditionMap: map[string]interface{}{
 			"module_published": true,
 		},
@@ -33,7 +33,7 @@ func (g *getModulesFromCourse) Run(params *domain.GetModulesParams) ([]domain.Mo
 		}
 	}
 
-	paginator := repository.PagesConfig{
+	paginator := shared.PagesConfig{
 		Page:         1,
 		ItemsPerPage: 10,
 	}
