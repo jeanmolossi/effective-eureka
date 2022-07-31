@@ -9,6 +9,21 @@ type FilterConditions struct {
 	mock.Mock
 }
 
+// AddCondition provides a mock function with given fields: field, value
+func (_m *FilterConditions) AddCondition(field string, value interface{}) {
+	_m.Called(field, value)
+}
+
+// AddField provides a mock function with given fields: field
+func (_m *FilterConditions) AddField(field string) {
+	_m.Called(field)
+}
+
+// AddFields provides a mock function with given fields: fields
+func (_m *FilterConditions) AddFields(fields []string) {
+	_m.Called(fields)
+}
+
 // Conditions provides a mock function with given fields:
 func (_m *FilterConditions) Conditions() (string, []interface{}) {
 	ret := _m.Called()
@@ -32,6 +47,29 @@ func (_m *FilterConditions) Conditions() (string, []interface{}) {
 	return r0, r1
 }
 
+// GetCondition provides a mock function with given fields: key
+func (_m *FilterConditions) GetCondition(key string) (interface{}, bool) {
+	ret := _m.Called(key)
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(string) interface{}); ok {
+		r0 = rf(key)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	var r1 bool
+	if rf, ok := ret.Get(1).(func(string) bool); ok {
+		r1 = rf(key)
+	} else {
+		r1 = ret.Get(1).(bool)
+	}
+
+	return r0, r1
+}
+
 // HasConditions provides a mock function with given fields:
 func (_m *FilterConditions) HasConditions() bool {
 	ret := _m.Called()
@@ -46,8 +84,13 @@ func (_m *FilterConditions) HasConditions() bool {
 	return r0
 }
 
-// OnlyFields provides a mock function with given fields: prefix
-func (_m *FilterConditions) OnlyFields(prefix string) []string {
+// RemoveCondition provides a mock function with given fields: field
+func (_m *FilterConditions) RemoveCondition(field string) {
+	_m.Called(field)
+}
+
+// SelectFields provides a mock function with given fields: prefix
+func (_m *FilterConditions) SelectFields(prefix string) []string {
 	ret := _m.Called(prefix)
 
 	var r0 []string
