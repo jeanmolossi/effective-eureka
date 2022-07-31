@@ -48,10 +48,9 @@ func (s *sectionRepository) GetByModuleID(filters ormcondition.FilterConditions,
 	}
 
 	moduleID := moduleIDinterface.(string)
-	var courseID string
 	var issetModule bool
 
-	if courseID, issetModule = s.IssetModule(moduleID); !issetModule {
+	if _, issetModule = s.IssetModule(moduleID); !issetModule {
 		return nil, shared.NewNotFoundErr(errors.New("module not found"))
 	}
 
@@ -78,7 +77,6 @@ func (s *sectionRepository) GetByModuleID(filters ormcondition.FilterConditions,
 
 	domainSections := make([]domain.Section, len(sections))
 	for i, section := range sections {
-		section.CourseID = courseID
 		domainSections[i] = ModelToDomain(section)
 	}
 

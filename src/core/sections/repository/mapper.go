@@ -1,6 +1,8 @@
 package repository
 
-import "github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+import (
+	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+)
 
 func ModelToDomain(model *SectionModel) domain.Section {
 	if model == nil {

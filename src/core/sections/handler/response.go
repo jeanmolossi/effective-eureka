@@ -31,12 +31,12 @@ func NewHttpSectionCreated(section domain.Section) *HttpSectionCreated {
 
 // HttpSectionOk returns a 201 response with a message
 type HttpSectionOk struct {
-	CourseID         string `json:"course_id" example:"05d4d9d3-01a3-4fd3-8d3e-e3178522f515"`
-	ModuleID         string `json:"module_id" example:"4aa77560-9c90-4128-b308-ad5c0515b5d7"`
-	SectionID        string `json:"section_id" example:"b670feb8-35d6-45b1-91c9-8586213b2688"`
-	SectionTitle     string `json:"section_title" example:"Effective Eureka"`
-	SectionIndex     uint16 `json:"section_index" example:"1"`
-	SectionPublished bool   `json:"section_published" example:"false"`
+	CourseID         string `json:"course_id,omitempty" example:"05d4d9d3-01a3-4fd3-8d3e-e3178522f515"`
+	ModuleID         string `json:"module_id,omitempty" example:"4aa77560-9c90-4128-b308-ad5c0515b5d7"`
+	SectionID        string `json:"section_id,omitempty" example:"b670feb8-35d6-45b1-91c9-8586213b2688"`
+	SectionTitle     string `json:"section_title,omitempty" example:"Effective Eureka"`
+	SectionIndex     uint16 `json:"section_index,omitempty" example:"1"`
+	SectionPublished bool   `json:"section_published,omitempty" example:"false"`
 }
 
 // NewHttpSectionOk returns a new HttpSectionOk

@@ -59,7 +59,7 @@ func (s *section) GetIndex() uint16 {
 
 // GetTitle returns the section title
 func (s *section) GetTitle() string {
-	return s.CourseID
+	return s.SectionTitle
 }
 
 // IsPublished returns true if the section is published
