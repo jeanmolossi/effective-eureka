@@ -59,7 +59,7 @@ definitions:
         example: Effective Eureka is a course about Go.
         type: string
       course_id:
-        example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
+        example: b23d00ec-69f7-4fc9-b86c-3ba91c845bff
         type: string
       course_published:
         example: false
@@ -255,7 +255,7 @@ definitions:
         example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
         type: string
       section_id:
-        example: 4aa77560-9c90-4128-b308-ad5c0515b5d7
+        example: b670feb8-35d6-45b1-91c9-8586213b2688
         type: string
       section_index:
         example: 1
@@ -1036,6 +1036,24 @@ paths:
         name: moduleID
         required: true
         type: string
+      - description: List not published courses too
+        in: query
+        name: not_published
+        type: boolean
+      - description: Only get that fields
+        in: query
+        items:
+          type: string
+        name: fields
+        type: array
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Only get that fields
+        in: query
+        name: items_per_page
+        type: integer
       produces:
       - application/json
       responses:
