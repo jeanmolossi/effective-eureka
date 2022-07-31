@@ -1,6 +1,11 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+)
 
 // Section is a domain section
 type Section interface {
@@ -64,7 +69,7 @@ type SectionsRepository interface {
 	// IssetModule returns true if the module exists
 	IssetModule(moduleID string) (string, bool)
 	// GetByModuleID returns the sections from a module
-	GetByModuleID(moduleID string) ([]Section, error)
+	GetByModuleID(filters shared.FilterConditions, paginator shared.Paginator) ([]Section, error)
 	// GetByID returns the section from a module
 	GetByID(sectionID string) (Section, error)
 	// Create creates a section in a module
@@ -72,6 +77,5 @@ type SectionsRepository interface {
 	// Edit updates a section in a module
 	Edit(section Section, updater SectionUpdater) (Section, error)
 	// GetLessons returns the lessons from a section
-	// TODO: []interface{} return should be replaced by []Lesson
-	GetLessons(sectionID string) ([]interface{}, error)
+	GetLessons(sectionID string) ([]domain.Lesson, error)
 }
