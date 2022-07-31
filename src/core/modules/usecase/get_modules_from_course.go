@@ -2,7 +2,8 @@ package usecase
 
 import (
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
-	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 )
 
 type getModulesFromCourse struct {
@@ -15,36 +16,22 @@ func NewGetModuleFromCourse(repo domain.ModuleRepository) domain.GetModuleFromCo
 
 // Run is the method to get a module by ID.
 func (g *getModulesFromCourse) Run(params *domain.GetModulesParams) ([]domain.Module, error) {
-	filters := shared.Filters{
-		ConditionMap: map[string]interface{}{
-			"module_published": true,
-		},
-	}
+	filters := ormcondition.NewFilterConditions()
+	filters.AddCondition("module_published", true)
+
+	paginator := paginator.NewPaginator()
 
 	if params != nil {
-		filters.Fields = params.Fields
+		filters.AddCondition("course_id", params.CourseID)
+		filters.AddFields(params.Fields)
 
 		if params.NotPublished {
-			filters.ConditionMap = nil
+			filters.RemoveCondition("module_published")
 		}
 
-		filters.ConditionMap = map[string]interface{}{
-			"course_id": params.CourseID,
-		}
+		paginator.SetPage(params.Page)
+		paginator.SetItemsPerPage(params.ItemsPerPage)
 	}
 
-	paginator := shared.PagesConfig{
-		Page:         1,
-		ItemsPerPage: 10,
-	}
-
-	if params.Page > 0 {
-		paginator.Page = params.Page
-	}
-
-	if params.ItemsPerPage > 0 {
-		paginator.ItemsPerPage = params.ItemsPerPage
-	}
-
-	return g.repo.GetByCourseID(&filters, &paginator)
+	return g.repo.GetByCourseID(filters, paginator)
 }

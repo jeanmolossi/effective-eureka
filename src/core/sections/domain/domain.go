@@ -4,7 +4,8 @@ import (
 	"time"
 
 	"github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
-	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 )
 
 // Section is a domain section
@@ -69,7 +70,7 @@ type SectionsRepository interface {
 	// IssetModule returns true if the module exists
 	IssetModule(moduleID string) (string, bool)
 	// GetByModuleID returns the sections from a module
-	GetByModuleID(filters shared.FilterConditions, paginator shared.Paginator) ([]Section, error)
+	GetByModuleID(filters ormcondition.FilterConditions, paginator paginator.Paginator) ([]Section, error)
 	// GetByID returns the section from a module
 	GetByID(sectionID string) (Section, error)
 	// Create creates a section in a module

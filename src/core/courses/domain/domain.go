@@ -3,7 +3,10 @@
 // That package is the course domain.
 package domain
 
-import "github.com/jeanmolossi/effective-eureka/src/core/shared"
+import (
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
+)
 
 // Course is a interface who provides methods to manage courses.
 type Course interface {
@@ -75,7 +78,7 @@ type CourseRepository interface {
 	// GetByStudentID returns a list of courses from a student.
 	GetByStudentID(studentID string) ([]Course, error)
 	// GetCourses returns a list of courses.
-	GetCourses(filters shared.FilterConditions, paginator shared.Paginator) ([]Course, error)
+	GetCourses(filters ormcondition.FilterConditions, paginator paginator.Paginator) ([]Course, error)
 	// Create creates a new course.
 	Create(course Course) (Course, error)
 	// EditInfo edits the course info.

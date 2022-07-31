@@ -142,7 +142,7 @@ func (h *Handler) EditSectionInfo(c echo.Context) error {
 // @param fields query []string false "Only get that fields"
 // @param page query uint16 false "Page"
 // @param items_per_page query int false "Only get that fields"
-// @success 200 {array} HttpSectionOk
+// @success 200 {array} HttpSectionWithMeta
 // @failure 400 {object} httputil.HttpBadRequestErr
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
 // @failure 404 {object} httputil.HttpNotFoundErr
@@ -166,7 +166,7 @@ func (h *Handler) GetSectionsFromModule(c echo.Context) error {
 		httpSections[i] = NewHttpSectionOk(section)
 	}
 
-	return c.JSON(http.StatusOK, httpSections)
+	return c.JSON(http.StatusOK, NewHttpSectionWithMeta(httpSections, params))
 }
 
 // GetSectionLessons is a function to get section lessons.

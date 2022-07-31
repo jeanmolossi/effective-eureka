@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"github.com/jeanmolossi/effective-eureka/src/core/modules/domain"
-	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 	"gorm.io/gorm"
 )
 
@@ -46,7 +47,7 @@ func (r *moduleRepository) GetByID(moduleID string) (domain.Module, error) {
 }
 
 // GetByCourseID returns a list of modules by course ID.
-func (r *moduleRepository) GetByCourseID(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Module, error) {
+func (r *moduleRepository) GetByCourseID(filters ormcondition.FilterConditions, paginator paginator.Paginator) ([]domain.Module, error) {
 	courseID, hasCondition := filters.GetCondition("course_id")
 
 	if !hasCondition {
@@ -61,7 +62,7 @@ func (r *moduleRepository) GetByCourseID(filters shared.FilterConditions, pagina
 
 	result := r.db.Table(r.table)
 	if filters.WithFields() {
-		result = result.Select(filters.OnlyFields(r.table))
+		result = result.Select(filters.SelectFields(r.table))
 	}
 
 	if filters.HasConditions() {

@@ -1,6 +1,11 @@
 package handler
 
-import "github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+import (
+	"fmt"
+
+	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+)
 
 // HttpSectionCreated returns a 201 response with a message
 type HttpSectionCreated struct {
@@ -43,5 +48,20 @@ func NewHttpSectionOk(section domain.Section) *HttpSectionOk {
 		SectionTitle:     section.GetTitle(),
 		SectionIndex:     section.GetIndex(),
 		SectionPublished: section.IsPublished(),
+	}
+}
+
+type HttpSectionWithMeta struct {
+	Data []*HttpSectionOk `json:"data"`
+	Meta *shared.HttpMeta `json:"meta"`
+}
+
+func NewHttpSectionWithMeta(sections []*HttpSectionOk, input *domain.GetSectionsParams) *HttpSectionWithMeta {
+	baseURL := fmt.Sprintf("http://localhost:8080/module/%s/sections", input.ModuleID)
+	meta := shared.GetMeta(baseURL, input.Page, input.ItemsPerPage, len(sections))
+
+	return &HttpSectionWithMeta{
+		Data: sections,
+		Meta: &meta,
 	}
 }

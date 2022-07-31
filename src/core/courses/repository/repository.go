@@ -7,6 +7,8 @@ import (
 
 	"github.com/jeanmolossi/effective-eureka/src/core/courses/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 	"gorm.io/gorm"
 )
 
@@ -45,12 +47,12 @@ func (r *repo) GetByStudentID(studentID string) ([]domain.Course, error) {
 }
 
 // GetCourses returns all courses.
-func (r *repo) GetCourses(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Course, error) {
+func (r *repo) GetCourses(filters ormcondition.FilterConditions, paginator paginator.Paginator) ([]domain.Course, error) {
 	models := []*CourseModel{}
 
 	result := r.db.Table(r.table)
 	if filters.WithFields() {
-		result = result.Select(filters.OnlyFields(r.table))
+		result = result.Select(filters.SelectFields(r.table))
 	}
 
 	if filters.HasConditions() {

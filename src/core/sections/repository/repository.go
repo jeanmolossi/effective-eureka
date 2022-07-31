@@ -7,6 +7,8 @@ import (
 	ldomain "github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +39,7 @@ func (s *sectionRepository) IssetModule(moduleID string) (string, bool) {
 }
 
 // GetByModuleID returns the sections from a module
-func (s *sectionRepository) GetByModuleID(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Section, error) {
+func (s *sectionRepository) GetByModuleID(filters ormcondition.FilterConditions, paginator paginator.Paginator) ([]domain.Section, error) {
 	moduleIDinterface, hasCondition := filters.GetCondition("module_id")
 	if !hasCondition {
 		return nil, domain.NewBadRequestErr(
@@ -50,14 +52,14 @@ func (s *sectionRepository) GetByModuleID(filters shared.FilterConditions, pagin
 	var issetModule bool
 
 	if courseID, issetModule = s.IssetModule(moduleID); !issetModule {
-		return nil, errors.New("module not found - not implemented domain err")
+		return nil, shared.NewNotFoundErr(errors.New("module not found"))
 	}
 
 	var sections []*SectionModel
 	result := s.db.Table(s.table)
 
 	if filters.WithFields() {
-		result = result.Select(filters.OnlyFields(s.table))
+		result = result.Select(filters.SelectFields(s.table))
 	}
 
 	if filters.HasConditions() {

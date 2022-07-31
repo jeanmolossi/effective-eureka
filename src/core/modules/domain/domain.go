@@ -3,7 +3,10 @@
 // That package is the module domain.
 package domain
 
-import "github.com/jeanmolossi/effective-eureka/src/core/shared"
+import (
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
+)
 
 type Module interface {
 	// GetCourseID returns parent course ID.
@@ -66,7 +69,7 @@ type ModuleRepository interface {
 	// GetByID returns a module by ID.
 	GetByID(moduleID string) (Module, error)
 	// GetByCourseID returns a list of modules by course ID.
-	GetByCourseID(filters shared.FilterConditions, paginator shared.Paginator) ([]Module, error)
+	GetByCourseID(filters ormcondition.FilterConditions, paginator paginator.Paginator) ([]Module, error)
 	// Create creates a new module.
 	Create(module Module) (Module, error)
 	// Edit updates a module.
