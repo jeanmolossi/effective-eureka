@@ -144,12 +144,20 @@ Feature: Create course
 		Then the status code received should be 200
 		Then the response received should match json:
 		"""
-		[{
-			"course_id": "b23d00ec-69f7-4fc9-b86c-3ba91c845bff",
-			"module_description": "A module for effective eureka",
-			"module_id": "4aa77560-9c90-4128-b308-ad5c0515b5d7",
-			"module_published": true,
-			"module_thumbnail": "http://www.example.com/thumb.jpg",
-			"module_title": "Effective Eureka"
-		}]
+		{
+			"data": [
+				{
+					"course_id": "b23d00ec-69f7-4fc9-b86c-3ba91c845bff",
+					"module_description": "A module for effective eureka",
+					"module_id": "4aa77560-9c90-4128-b308-ad5c0515b5d7",
+					"module_published": true,
+					"module_thumbnail": "http://www.example.com/thumb.jpg",
+					"module_title": "Effective Eureka"
+				}
+			],
+			"meta": {
+				"items_per_page": 10,
+				"page": 1
+			}
+		}
 		"""
