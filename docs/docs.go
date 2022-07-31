@@ -864,7 +864,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/handler.HttpSectionOk"
+                                "$ref": "#/definitions/handler.HttpSectionWithMeta"
                             }
                         }
                     },
@@ -1678,6 +1678,20 @@ const docTemplate = `{
                 "section_title": {
                     "type": "string",
                     "example": "Effective Eureka"
+                }
+            }
+        },
+        "handler.HttpSectionWithMeta": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.HttpSectionOk"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/shared.HttpMeta"
                 }
             }
         },

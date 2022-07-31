@@ -267,6 +267,15 @@ definitions:
         example: Effective Eureka
         type: string
     type: object
+  handler.HttpSectionWithMeta:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/handler.HttpSectionOk'
+        type: array
+      meta:
+        $ref: '#/definitions/shared.HttpMeta'
+    type: object
   handler.HttpStudentForbiddenErr:
     properties:
       error:
@@ -1061,7 +1070,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/handler.HttpSectionOk'
+              $ref: '#/definitions/handler.HttpSectionWithMeta'
             type: array
         "400":
           description: Bad Request
