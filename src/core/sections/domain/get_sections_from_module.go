@@ -3,7 +3,7 @@ package domain
 import "errors"
 
 type GetSectionsParams struct {
-	ModuleID     string   `param:"module_id" validate:"required"`
+	ModuleID     string   `param:"moduleID" validate:"required"`
 	Fields       []string `query:"fields"`
 	NotPublished bool     `query:"not_published"`
 	Page         uint16   `query:"page"`
@@ -21,5 +21,5 @@ func (g *GetSectionsParams) GetErrorMap() map[string]map[string]error {
 // GetSectionsFromModule returns the sections from a module
 type GetSectionsFromModule interface {
 	// Run execute usecase to get sections from module
-	Run(moduleID string) ([]Section, error)
+	Run(input *GetSectionsParams) ([]Section, error)
 }

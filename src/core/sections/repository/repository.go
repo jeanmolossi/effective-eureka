@@ -4,7 +4,9 @@ package repository
 import (
 	"errors"
 
+	ldomain "github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"gorm.io/gorm"
 )
 
@@ -35,17 +37,39 @@ func (s *sectionRepository) IssetModule(moduleID string) (string, bool) {
 }
 
 // GetByModuleID returns the sections from a module
-func (s *sectionRepository) GetByModuleID(moduleID string) ([]domain.Section, error) {
+func (s *sectionRepository) GetByModuleID(filters shared.FilterConditions, paginator shared.Paginator) ([]domain.Section, error) {
+	moduleIDinterface, hasCondition := filters.GetCondition("module_id")
+	if !hasCondition {
+		return nil, domain.NewBadRequestErr(
+			errors.New("module_id is required"),
+		)
+	}
+
+	moduleID := moduleIDinterface.(string)
 	var courseID string
 	var issetModule bool
+
 	if courseID, issetModule = s.IssetModule(moduleID); !issetModule {
 		return nil, errors.New("module not found - not implemented domain err")
 	}
 
 	var sections []*SectionModel
-	result := s.db.Table(s.table).Select("*").Where(
-		"module_id = ?", moduleID,
-	).Find(&sections)
+	result := s.db.Table(s.table)
+
+	if filters.WithFields() {
+		result = result.Select(filters.OnlyFields(s.table))
+	}
+
+	if filters.HasConditions() {
+		statement, values := filters.Conditions()
+		result = result.Where(statement, values...)
+	}
+
+	if paginator.ShouldPaginate() {
+		result = result.Scopes(paginator.Paginate)
+	}
+
+	result = result.Find(&sections)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -144,7 +168,6 @@ func (s *sectionRepository) Edit(section domain.Section, updater domain.SectionU
 }
 
 // GetLessons returns the lessons from a section
-// TODO: []interface{} return should be replaced by []Lesson
-func (s *sectionRepository) GetLessons(sectionID string) ([]interface{}, error) {
+func (s *sectionRepository) GetLessons(sectionID string) ([]ldomain.Lesson, error) {
 	return nil, errors.New("not implemented")
 }

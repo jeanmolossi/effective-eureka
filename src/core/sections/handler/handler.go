@@ -138,6 +138,10 @@ func (h *Handler) EditSectionInfo(c echo.Context) error {
 // @accept json
 // @produce json
 // @param moduleID path string true "Module ID"
+// @param not_published query bool false "List not published courses too"
+// @param fields query []string false "Only get that fields"
+// @param page query uint16 false "Page"
+// @param items_per_page query int false "Only get that fields"
 // @success 200 {array} HttpSectionOk
 // @failure 400 {object} httputil.HttpBadRequestErr
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
@@ -146,15 +150,13 @@ func (h *Handler) EditSectionInfo(c echo.Context) error {
 // @security access_token
 // @router /module/{moduleID}/sections [get]
 func (h *Handler) GetSectionsFromModule(c echo.Context) error {
-	moduleID := c.Param("moduleID")
+	params := new(domain.GetSectionsParams)
 
-	if moduleID == "" {
-		return ErrorHandler(c, domain.NewBadRequestErr(
-			errors.New("moduleID is required"),
-		))
+	if err := c.Bind(params); err != nil {
+		return ErrorHandler(c, err)
 	}
 
-	sections, err := h.getSectionsFromModule.Run(moduleID)
+	sections, err := h.getSectionsFromModule.Run(params)
 	if err != nil {
 		return ErrorHandler(c, err)
 	}
