@@ -85,6 +85,10 @@ func (s *sectionRepository) GetByModuleID(filters ormcondition.FilterConditions,
 
 // GetByID returns the section from a module
 func (s *sectionRepository) GetByID(sectionID string) (domain.Section, error) {
+	if sectionID == "" {
+		return nil, domain.NewBadRequestErr(errors.New("section_id is required"))
+	}
+
 	section := &SectionModel{SectionID: sectionID}
 
 	result := s.db.Table(s.table).First(&section)

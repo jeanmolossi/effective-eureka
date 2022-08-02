@@ -120,7 +120,7 @@ func (h *Handler) EditSectionInfo(c echo.Context) error {
 		input.Index,
 		input.Published,
 		nil, nil,
-	)
+	).WithID(input.SectionID)
 
 	editedSection, err := h.editSectionInfo.Run(section.Build())
 	if err != nil {
