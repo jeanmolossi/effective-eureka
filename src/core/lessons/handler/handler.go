@@ -14,18 +14,21 @@ import (
 )
 
 type Handler struct {
-	addLessonInSection domain.AddLessonInSection
-	editLesson         domain.EditLessonInfo
+	addLessonInSection  domain.AddLessonInSection
+	editLesson          domain.EditLessonInfo
+	getLessonsInSection domain.GetLessonsInSection
 }
 
 func NewHandler(db *gorm.DB) *Handler {
 	repo := repository.NewRepository(db)
 	addLessonInSection := usecase.NewAddLessonInSection(repo)
 	editLesson := usecase.NewEditLessonInfo(repo)
+	getLessonsInSection := usecase.NewGetLessonsInSection(repo)
 
 	return &Handler{
 		addLessonInSection,
 		editLesson,
+		getLessonsInSection,
 	}
 }
 

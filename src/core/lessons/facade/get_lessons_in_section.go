@@ -10,7 +10,7 @@ import (
 )
 
 type GetLessonsInSection interface {
-	Run(sectionID string) ([]*handler.HttpLessonOk, error)
+	Run(params *domain.GetLessonsInSectionParams) (*handler.HttpLessonsWithMeta, error)
 }
 
 type getLessonsInSection struct {
@@ -30,9 +30,8 @@ func NewGetLessonsInSection(db *gorm.DB) GetLessonsInSection {
 	}
 }
 
-func (g *getLessonsInSection) Run(sectionID string) ([]*handler.HttpLessonOk, error) {
-
-	lessons, err := g.getLessons.Run(sectionID)
+func (g *getLessonsInSection) Run(params *domain.GetLessonsInSectionParams) (*handler.HttpLessonsWithMeta, error) {
+	lessons, err := g.getLessons.Run(params)
 	if err != nil {
 		return nil, err
 	}
@@ -42,5 +41,5 @@ func (g *getLessonsInSection) Run(sectionID string) ([]*handler.HttpLessonOk, er
 		httpLessons[i] = handler.NewHttpLessonOk(lesson)
 	}
 
-	return httpLessons, nil
+	return handler.NewHttpLessonsWithMeta(httpLessons, params), nil
 }

@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 	"gorm.io/gorm"
 )
 
@@ -52,7 +54,16 @@ func (l *lessonRepository) GetLesson(lessonID string) (domain.Lesson, error) {
 	return ModelToDomain(model), nil
 }
 
-func (l *lessonRepository) GetLessonsFromSection(sectionID string) ([]domain.Lesson, error) {
+func (l *lessonRepository) GetLessonsFromSection(filters ormcondition.FilterConditions, pagination paginator.Paginator) ([]domain.Lesson, error) {
+	sectionIDCondition, exists := filters.GetCondition("section_id")
+	if !exists {
+		return nil, domain.NewBadRequestErr(
+			errors.New("section_id is required"),
+		)
+	}
+
+	sectionID := sectionIDCondition.(string)
+
 	if !l.IssetSection(sectionID) {
 		return nil, domain.NewNotFoundErr(
 			errors.New("section not found"),
@@ -60,7 +71,22 @@ func (l *lessonRepository) GetLessonsFromSection(sectionID string) ([]domain.Les
 	}
 
 	models := []*LessonModel{}
-	result := l.db.Table(l.table).Where("section_id = ?", sectionID).Find(&models)
+	result := l.db.Table(l.table)
+
+	if filters.WithFields() {
+		result = result.Select(filters.SelectFields(l.table))
+	}
+
+	if filters.HasConditions() {
+		statement, values := filters.Conditions()
+		result = result.Where(statement, values...)
+	}
+
+	if pagination.ShouldPaginate() {
+		result = result.Scopes(pagination.Paginate)
+	}
+
+	result = result.Find(&models)
 
 	if result.Error != nil {
 		return nil, result.Error

@@ -2,6 +2,9 @@ package domain
 
 import (
 	"time"
+
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+	"github.com/jeanmolossi/effective-eureka/src/pkg/paginator"
 )
 
 type Lesson interface {
@@ -33,16 +36,12 @@ type EditLessonInfo interface {
 	EditLesson(lesson Lesson) (Lesson, error)
 }
 
-type GetLessonsInSection interface {
-	Run(sectionID string) ([]Lesson, error)
-}
-
 type LessonUpdater func(lesson Lesson) (Lesson, error)
 
 type LessonRepository interface {
 	IssetSection(sectionID string) bool
 	Create(lesson Lesson) (Lesson, error)
 	GetLesson(lessonID string) (Lesson, error)
-	GetLessonsFromSection(sectionID string) ([]Lesson, error)
+	GetLessonsFromSection(filters ormcondition.FilterConditions, pagination paginator.Paginator) ([]Lesson, error)
 	Edit(lessonID string, updater LessonUpdater) (Lesson, error)
 }

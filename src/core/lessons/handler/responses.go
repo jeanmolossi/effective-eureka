@@ -1,6 +1,11 @@
 package handler
 
-import "github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
+import (
+	"fmt"
+
+	"github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
+)
 
 // HttpLessonCreated is a struct to manage the LessonCreated response model.
 type HttpLessonCreated struct {
@@ -37,5 +42,19 @@ func NewHttpLessonOk(lesson domain.Lesson) *HttpLessonOk {
 		LessonThumbnail:   lesson.GetThumbnail(),
 		LessonDescription: lesson.GetDescription(),
 		LessonPublished:   lesson.IsPublished(),
+	}
+}
+
+type HttpLessonsWithMeta struct {
+	Data []*HttpLessonOk `json:"data"`
+	Meta shared.HttpMeta `json:"meta"`
+}
+
+func NewHttpLessonsWithMeta(lessons []*HttpLessonOk, params *domain.GetLessonsInSectionParams) *HttpLessonsWithMeta {
+	baseURL := fmt.Sprintf("http://localhost:8080/section/%s/lessons", params.SectionID)
+
+	return &HttpLessonsWithMeta{
+		Data: lessons,
+		Meta: shared.GetMeta(baseURL, params.Page, params.ItemsPerPage, len(lessons)),
 	}
 }

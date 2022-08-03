@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
+	lessonsDomain "github.com/jeanmolossi/effective-eureka/src/core/lessons/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/lessons/facade"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/domain"
 	"github.com/jeanmolossi/effective-eureka/src/core/sections/factory"
@@ -177,6 +177,10 @@ func (h *Handler) GetSectionsFromModule(c echo.Context) error {
 // @accept json
 // @produce json
 // @param sectionID path string true "Section ID"
+// @param not_published query bool false "List not published lessons too"
+// @param fields query []string false "Only get that fields"
+// @param page query uint16 false "Page"
+// @param items_per_page query int false "Only get that fields"
 // @success 200 {array} HttpLessonOk
 // @failure 400 {object} httputil.HttpBadRequestErr
 // @failure 403 {object} httputil.HttpMissingAuthenticationErr
@@ -185,15 +189,17 @@ func (h *Handler) GetSectionsFromModule(c echo.Context) error {
 // @security access_token
 // @router /section/{sectionID}/lessons [get]
 func (h *Handler) GetSectionLessons(c echo.Context) error {
-	sectionID := c.Param("sectionID")
+	params := new(lessonsDomain.GetLessonsInSectionParams)
 
-	if sectionID == "" {
-		return ErrorHandler(c, domain.NewBadRequestErr(
-			errors.New("sectionID is required"),
-		))
+	if err := c.Bind(params); err != nil {
+		return ErrorHandler(c, err)
 	}
 
-	lessons, err := h.getLessonsInSection.Run(sectionID)
+	if err := c.Validate(params); err != nil {
+		return ErrorHandler(c, err)
+	}
+
+	lessons, err := h.getLessonsInSection.Run(params)
 	if err != nil {
 		return ErrorHandler(c, err)
 	}
