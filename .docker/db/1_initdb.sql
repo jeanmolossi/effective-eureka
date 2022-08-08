@@ -1,11 +1,11 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE courses (
-	course_id VARCHAR(36) PRIMARY KEY DEFAULT uuid_generate_v4(),
+	course_id VARCHAR(36) NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
 	course_title VARCHAR(255) NOT NULL,
-	course_description TEXT NOT NULL DEFAULT 'Sem descrição',
+	course_description TEXT NULL DEFAULT 'Sem descrição',
 	course_thumb TEXT NULL,
-	course_published BOOLEAN NOT NULL DEFAULT FALSE,
+	course_published BOOLEAN NULL DEFAULT FALSE,
 	course_created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	course_updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
