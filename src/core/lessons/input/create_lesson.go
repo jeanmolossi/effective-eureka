@@ -3,12 +3,14 @@ package input
 import "errors"
 
 type CreateLesson struct {
-	SectionID   string `json:"-" param:"sectionID" validate:"required"`
-	Title       string `json:"title" validate:"required,max=255" example:"Lesson 1"`
-	Description string `json:"description" validate:"max=255" example:"Lesson 1 description"`
-	Thumbnail   string `json:"thumbnail" example:"https://example.com/thumbnail.png"`
-	Index       uint16 `json:"index" example:"1"`
-	Published   bool   `json:"published" example:"true"`
+	SectionID    string `json:"-" param:"sectionID" validate:"required"`
+	Title        string `json:"title" validate:"required,max=255" example:"Lesson 1"`
+	Description  string `json:"description" validate:"max=255" example:"Lesson 1 description"`
+	Thumbnail    string `json:"thumbnail" example:"https://example.com/thumbnail.png"`
+	VideoPreview string `json:"videoPreview" example:"https://example.com/videoPreview.png"`
+	Video        string `json:"video" example:"https://example.com/video.mp4"`
+	Index        uint16 `json:"index" example:"1"`
+	Published    bool   `json:"published" example:"true"`
 }
 
 func (c *CreateLesson) GetErrorMap() map[string]map[string]error {

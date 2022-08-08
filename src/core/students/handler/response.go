@@ -16,7 +16,7 @@ func NewHttpStudentRegistered(student domain.Student) *HttpStudentRegistered {
 
 type HttpStudent struct {
 	StudentID    string `json:"student_id,omitempty" example:"05d4d9d3-01a3-4fd3-8d3e-e3178522f514"`
-	StudentEmail string `json:"student_email,omitempty" example:"jean@email.com"`
+	StudentEmail string `json:"student_email,omitempty" example:"john@doe.com"`
 }
 
 func NewHttpStudent(student domain.Student) *HttpStudent {

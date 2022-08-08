@@ -66,6 +66,7 @@ func RunServer() {
 	lh := lessonsHandler.NewHandler(dbConn.DB())
 	e.POST("/section/:sectionID/lesson", lh.CreateLesson)
 	e.PUT("/lesson/:lessonID", lh.EditLessonInfo)
+	e.GET("/lesson/:lessonID", lh.GetLessonByID)
 
 	// Authentication
 	ah := auth.NewHandler(dbConn.DB())

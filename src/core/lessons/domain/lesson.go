@@ -3,26 +3,30 @@ package domain
 import "time"
 
 type lesson struct {
-	sectionID   string
-	lessonID    string
-	index       uint16
-	title       string
-	description string
-	thumb       string
-	published   bool
-	createdAt   time.Time
-	updatedAt   time.Time
+	sectionID    string
+	lessonID     string
+	index        uint16
+	title        string
+	description  string
+	thumb        string
+	videoPreview string
+	video        string
+	published    bool
+	createdAt    time.Time
+	updatedAt    time.Time
 }
 
-func NewLesson(sectionID, lessonID, title, description, thumb string, index uint16, published bool, createdAt, updatedAt *time.Time) Lesson {
+func NewLesson(sectionID, lessonID, title, description, thumb, videoPreview, video string, index uint16, published bool, createdAt, updatedAt *time.Time) Lesson {
 	less := &lesson{
-		sectionID:   sectionID,
-		lessonID:    lessonID,
-		index:       index,
-		title:       title,
-		description: description,
-		thumb:       thumb,
-		published:   published,
+		sectionID:    sectionID,
+		lessonID:     lessonID,
+		index:        index,
+		title:        title,
+		description:  description,
+		thumb:        thumb,
+		videoPreview: videoPreview,
+		video:        video,
+		published:    published,
 	}
 
 	if createdAt != nil {
@@ -56,6 +60,14 @@ func (l *lesson) GetThumbnail() string {
 	return l.thumb
 }
 
+func (l *lesson) GetVideoPreview() string {
+	return l.videoPreview
+}
+
+func (l *lesson) GetVideo() string {
+	return l.video
+}
+
 func (l *lesson) GetIndex() uint16 {
 	return l.index
 }
@@ -86,6 +98,14 @@ func (l *lesson) SetDescription(description string) {
 
 func (l *lesson) SetThumbnail(thumbnail string) {
 	l.thumb = thumbnail
+}
+
+func (l *lesson) SetVideoPreview(previewUrl string) {
+	l.videoPreview = previewUrl
+}
+
+func (l *lesson) SetVideo(video string) {
+	l.video = video
 }
 
 func (l *lesson) SetIndex(index uint16) {

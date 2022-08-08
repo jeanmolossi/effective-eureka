@@ -43,9 +43,23 @@ func (l *lessonRepository) Create(lesson domain.Lesson) (domain.Lesson, error) {
 	return ModelToDomain(model), nil
 }
 
-func (l *lessonRepository) GetLesson(lessonID string) (domain.Lesson, error) {
+func (l *lessonRepository) GetLesson(filters ormcondition.FilterConditions) (domain.Lesson, error) {
 	model := &LessonModel{}
-	result := l.db.Table(l.table).Where("lesson_id = ?", lessonID).First(model)
+	result := l.db.Table(l.table)
+
+	if filters.WithFields() {
+		result = result.Select(filters.SelectFields(l.table))
+	}
+
+	if filters.HasConditions() {
+		result = result.Where(filters.Conditions())
+	} else {
+		return nil, domain.NewBadRequestErr(
+			errors.New("lesson id is required"),
+		)
+	}
+
+	result = result.First(model)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -101,7 +115,10 @@ func (l *lessonRepository) GetLessonsFromSection(filters ormcondition.FilterCond
 }
 
 func (l *lessonRepository) Edit(lessonID string, updater domain.LessonUpdater) (domain.Lesson, error) {
-	currentLesson, err := l.GetLesson(lessonID)
+	filters := ormcondition.NewFilterConditions()
+	filters.AddCondition("lesson_id", lessonID)
+
+	currentLesson, err := l.GetLesson(filters)
 	if err != nil {
 		return nil, err
 	}

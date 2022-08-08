@@ -7,7 +7,7 @@ import (
 )
 
 type Lesson interface {
-	CreateLesson(title string, description string, thumb string, index uint16, published bool, createdAt *time.Time, updatedAt *time.Time) Lesson
+	CreateLesson(title string, description string, thumb, videoPreview, video string, index uint16, published bool, createdAt *time.Time, updatedAt *time.Time) Lesson
 	WithLessonID(lessonID string) Lesson
 	WithSectionID(sectionID string) Lesson
 	Build() domain.Lesson
@@ -18,15 +18,29 @@ type lesson struct {
 }
 
 func NewLesson() Lesson {
-	return &lesson{domain.NewLesson("", "", "", "", "", 0, false, nil, nil)}
+	return &lesson{domain.NewLesson(
+		"",    // sectionID
+		"",    // lessonID
+		"",    // title
+		"",    // description
+		"",    // thumb
+		"",    // videoPreview
+		"",    // video
+		0,     // index
+		false, // published
+		nil,   // createdAt
+		nil),  // updatedAt
+	}
 }
 
-func (l *lesson) CreateLesson(title, description, thumb string, index uint16, published bool, createdAt *time.Time, updatedAt *time.Time) Lesson {
+func (l *lesson) CreateLesson(title, description, thumb, videoPreview, video string, index uint16, published bool, createdAt *time.Time, updatedAt *time.Time) Lesson {
 	if createdAt != nil && updatedAt != nil {
 		l.Lesson = domain.NewLesson("", "",
 			title,
 			description,
 			thumb,
+			videoPreview,
+			video,
 			index,
 			published,
 			createdAt, updatedAt)
@@ -34,6 +48,8 @@ func (l *lesson) CreateLesson(title, description, thumb string, index uint16, pu
 		l.Lesson.SetTitle(title)
 		l.Lesson.SetDescription(description)
 		l.Lesson.SetThumbnail(thumb)
+		l.Lesson.SetVideoPreview(videoPreview)
+		l.Lesson.SetVideo(video)
 		l.Lesson.SetIndex(index)
 
 		if published {

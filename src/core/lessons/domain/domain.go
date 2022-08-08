@@ -13,6 +13,8 @@ type Lesson interface {
 	GetTitle() string
 	GetDescription() string
 	GetThumbnail() string
+	GetVideoPreview() string
+	GetVideo() string
 	GetIndex() uint16
 	IsPublished() bool
 	GetTimestamps() (createdAt, updatedAt time.Time)
@@ -22,6 +24,8 @@ type Lesson interface {
 	SetTitle(title string)
 	SetDescription(description string)
 	SetThumbnail(thumbnail string)
+	SetVideoPreview(previewUrl string)
+	SetVideo(video string)
 	SetIndex(index uint16)
 
 	Publish()
@@ -41,7 +45,7 @@ type LessonUpdater func(lesson Lesson) (Lesson, error)
 type LessonRepository interface {
 	IssetSection(sectionID string) bool
 	Create(lesson Lesson) (Lesson, error)
-	GetLesson(lessonID string) (Lesson, error)
+	GetLesson(filters ormcondition.FilterConditions) (Lesson, error)
 	GetLessonsFromSection(filters ormcondition.FilterConditions, pagination paginator.Paginator) ([]Lesson, error)
 	Edit(lessonID string, updater LessonUpdater) (Lesson, error)
 }

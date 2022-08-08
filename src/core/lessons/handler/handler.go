@@ -17,6 +17,7 @@ type Handler struct {
 	addLessonInSection  domain.AddLessonInSection
 	editLesson          domain.EditLessonInfo
 	getLessonsInSection domain.GetLessonsInSection
+	getLessonByID       domain.GetLesson
 }
 
 func NewHandler(db *gorm.DB) *Handler {
@@ -24,11 +25,13 @@ func NewHandler(db *gorm.DB) *Handler {
 	addLessonInSection := usecase.NewAddLessonInSection(repo)
 	editLesson := usecase.NewEditLessonInfo(repo)
 	getLessonsInSection := usecase.NewGetLessonsInSection(repo)
+	getLessonByID := usecase.NewGetLessonByID(repo)
 
 	return &Handler{
 		addLessonInSection,
 		editLesson,
 		getLessonsInSection,
+		getLessonByID,
 	}
 }
 
@@ -63,6 +66,8 @@ func (h *Handler) CreateLesson(c echo.Context) error {
 		input.Title,
 		input.Description,
 		input.Thumbnail,
+		input.VideoPreview,
+		input.Video,
 		input.Index,
 		input.Published,
 		nil, nil,
@@ -107,6 +112,8 @@ func (h *Handler) EditLessonInfo(c echo.Context) error {
 		input.Title,
 		input.Description,
 		input.Thumbnail,
+		input.VideoPreview,
+		input.Video,
 		input.Index,
 		input.Published,
 		nil, nil,
@@ -118,4 +125,39 @@ func (h *Handler) EditLessonInfo(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, NewHttpLessonOk(updatedLesson))
+}
+
+// GetLessonByID is a endpoint to get single lesson info
+//
+// @summary Get a lesson
+// @description Get a lesson
+// @tags lessons
+// @accept json
+// @produce json
+// @param lessonID path string true "Lesson ID"
+// @param fields query []string false "Fields"
+// @success 200 {object} HttpLessonOk
+// @failure 400 {object} httputil.HttpBadRequestErr
+// @failure 403 {object} httputil.HttpMissingAuthenticationErr
+// @failure 404 {object} httputil.HttpNotFoundErr
+// @failure 500 {object} httputil.HttpInternalServerErr
+// @security access_token
+// @router /lesson/{lessonID} [get]
+func (h *Handler) GetLessonByID(c echo.Context) error {
+	input := new(domain.GetLessonParams)
+
+	if err := c.Bind(input); err != nil {
+		return shared.ErrorHandler(c, err)
+	}
+
+	if err := c.Validate(input); err != nil {
+		return shared.ErrorHandler(c, err)
+	}
+
+	lesson, err := h.getLessonByID.Run(input)
+	if err != nil {
+		return shared.ErrorHandler(c, err)
+	}
+
+	return c.JSON(http.StatusOK, NewHttpLessonOk(lesson))
 }
