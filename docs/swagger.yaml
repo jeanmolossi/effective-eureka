@@ -112,38 +112,50 @@ definitions:
     type: object
   handler.HttpLessonCreated:
     properties:
-      lesson_description:
+      description:
         example: Effective Eureka is a lesson about Go.
         type: string
-      lesson_id:
+      id:
         example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
         type: string
-      lesson_published:
+      published:
         example: false
         type: boolean
-      lesson_thumbnail:
+      thumbnail:
         example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
         type: string
-      lesson_title:
+      title:
         example: Effective Eureka
+        type: string
+      video:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/video.mp4
+        type: string
+      video_preview:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/videoPreview.png
         type: string
     type: object
   handler.HttpLessonOk:
     properties:
-      lesson_description:
+      description:
         example: Effective Eureka is a lesson about Go.
         type: string
-      lesson_id:
+      id:
         example: 05d4d9d3-01a3-4fd3-8d3e-e3178522f514
         type: string
-      lesson_published:
+      published:
         example: false
         type: boolean
-      lesson_thumbnail:
+      thumbnail:
         example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
         type: string
-      lesson_title:
+      title:
         example: Effective Eureka
+        type: string
+      video:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
+        type: string
+      video_preview:
+        example: https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png
         type: string
     type: object
   handler.HttpModuleCreated:
@@ -371,6 +383,12 @@ definitions:
         example: Lesson 1
         maxLength: 255
         type: string
+      video:
+        example: https://example.com/video.mp4
+        type: string
+      videoPreview:
+        example: https://example.com/videoPreview.png
+        type: string
     required:
     - title
     type: object
@@ -444,6 +462,12 @@ definitions:
       title:
         example: Lesson 1
         maxLength: 255
+        type: string
+      video:
+        example: https://example.com/video.mp4
+        type: string
+      videoPreview:
+        example: https://example.com/videoPreview.png
         type: string
     required:
     - title
@@ -862,6 +886,50 @@ paths:
       tags:
       - modules
   /lesson/{lessonID}:
+    get:
+      consumes:
+      - application/json
+      description: Get a lesson
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lessonID
+        required: true
+        type: string
+      - description: Fields
+        in: query
+        items:
+          type: string
+        name: fields
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HttpLessonOk'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpBadRequestErr'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.HttpMissingAuthenticationErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HttpNotFoundErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpInternalServerErr'
+      security:
+      - access_token: []
+      summary: Get a lesson
+      tags:
+      - lessons
     put:
       consumes:
       - application/json

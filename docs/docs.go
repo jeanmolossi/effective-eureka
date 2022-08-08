@@ -536,6 +536,74 @@ const docTemplate = `{
             }
         },
         "/lesson/{lessonID}": {
+            "get": {
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ],
+                "description": "Get a lesson",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lessons"
+                ],
+                "summary": "Get a lesson",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Lesson ID",
+                        "name": "lessonID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Fields",
+                        "name": "fields",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HttpLessonOk"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpBadRequestErr"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpMissingAuthenticationErr"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpNotFoundErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpInternalServerErr"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -1501,50 +1569,66 @@ const docTemplate = `{
         "handler.HttpLessonCreated": {
             "type": "object",
             "properties": {
-                "lesson_description": {
+                "description": {
                     "type": "string",
                     "example": "Effective Eureka is a lesson about Go."
                 },
-                "lesson_id": {
+                "id": {
                     "type": "string",
                     "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
                 },
-                "lesson_published": {
+                "published": {
                     "type": "boolean",
                     "example": false
                 },
-                "lesson_thumbnail": {
+                "thumbnail": {
                     "type": "string",
                     "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
                 },
-                "lesson_title": {
+                "title": {
                     "type": "string",
                     "example": "Effective Eureka"
+                },
+                "video": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/video.mp4"
+                },
+                "video_preview": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/videoPreview.png"
                 }
             }
         },
         "handler.HttpLessonOk": {
             "type": "object",
             "properties": {
-                "lesson_description": {
+                "description": {
                     "type": "string",
                     "example": "Effective Eureka is a lesson about Go."
                 },
-                "lesson_id": {
+                "id": {
                     "type": "string",
                     "example": "05d4d9d3-01a3-4fd3-8d3e-e3178522f514"
                 },
-                "lesson_published": {
+                "published": {
                     "type": "boolean",
                     "example": false
                 },
-                "lesson_thumbnail": {
+                "thumbnail": {
                     "type": "string",
                     "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
                 },
-                "lesson_title": {
+                "title": {
                     "type": "string",
                     "example": "Effective Eureka"
+                },
+                "video": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
+                },
+                "video_preview": {
+                    "type": "string",
+                    "example": "https://effective-eureka.s3.amazonaws.com/courses/effective-eureka/thumbnail.png"
                 }
             }
         },
@@ -1871,6 +1955,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "example": "Lesson 1"
+                },
+                "video": {
+                    "type": "string",
+                    "example": "https://example.com/video.mp4"
+                },
+                "videoPreview": {
+                    "type": "string",
+                    "example": "https://example.com/videoPreview.png"
                 }
             }
         },
@@ -1972,6 +2064,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "example": "Lesson 1"
+                },
+                "video": {
+                    "type": "string",
+                    "example": "https://example.com/video.mp4"
+                },
+                "videoPreview": {
+                    "type": "string",
+                    "example": "https://example.com/videoPreview.png"
                 }
             }
         },
