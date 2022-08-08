@@ -49,7 +49,10 @@ func (h *Handler) GetPurchases(c echo.Context) error {
 		))
 	}
 
-	student, err := h.getMe.Run(c.Get("studentID").(string))
+	input := new(studentsDomain.GetMeParams)
+	input.StudentID = c.Get("studentID").(string)
+
+	student, err := h.getMe.Run(input)
 	if err != nil {
 		return shared.ErrorHandler(c, err)
 	}

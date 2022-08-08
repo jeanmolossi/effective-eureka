@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/jeanmolossi/effective-eureka/src/core/students/domain"
 	"github.com/jeanmolossi/effective-eureka/src/pkg/auth"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
 )
 
 type getMe struct {
@@ -16,8 +17,12 @@ func NewGetMe(repo domain.StudentRepository, authProvider *auth.SessionProvider)
 }
 
 // GetMe gets a student by authentication hash.
-func (g *getMe) Run(studentID string) (domain.Student, error) {
-	student, err := g.repo.GetStudentByID(studentID)
+func (g *getMe) Run(input *domain.GetMeParams) (domain.Student, error) {
+	filters := ormcondition.NewFilterConditions()
+	filters.AddFields(input.Fields)
+	filters.AddCondition("student_id", input.StudentID)
+
+	student, err := g.repo.GetStudentByID(filters)
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,9 @@ package repository
 import (
 	"errors"
 
+	"github.com/jeanmolossi/effective-eureka/src/core/shared"
 	"github.com/jeanmolossi/effective-eureka/src/core/students/domain"
+	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
 	"gorm.io/gorm"
 )
 
@@ -18,9 +20,23 @@ func NewStudent(db *gorm.DB) domain.StudentRepository {
 }
 
 // GetStudentByID returns a student by ID.
-func (s *studentRepository) GetStudentByID(studentID string) (domain.Student, error) {
+func (s *studentRepository) GetStudentByID(filters ormcondition.FilterConditions) (domain.Student, error) {
 	model := &StudentModel{}
-	result := s.db.Table("students").Where("student_id = ?", studentID).First(model)
+	result := s.db.Table("students")
+
+	if filters.WithFields() {
+		result = result.Select(filters.SelectFields("students"))
+	}
+
+	if filters.HasConditions() {
+		result = result.Where(filters.Conditions())
+	} else {
+		return nil, shared.NewBadRequestErr(
+			errors.New("student id missing"),
+		)
+	}
+
+	result = result.First(model)
 
 	if result.Error != nil {
 		return nil, result.Error

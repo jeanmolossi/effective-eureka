@@ -23,6 +23,9 @@ func (g *getCourses) Run(params *domain.GetCoursesParams) ([]domain.Course, erro
 	if params != nil {
 		filters.AddFields(params.Fields)
 
+		paginator.SetItemsPerPage(params.ItemsPerPage)
+		paginator.SetPage(params.Page)
+
 		if params.NotPublished {
 			filters.RemoveCondition("course_published")
 		}

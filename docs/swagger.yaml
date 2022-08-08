@@ -1262,7 +1262,7 @@ paths:
         name: sectionID
         required: true
         type: string
-      - description: List not published courses too
+      - description: List not published lessons too
         in: query
         name: not_published
         type: boolean
@@ -1315,6 +1315,13 @@ paths:
       consumes:
       - application/json
       description: Get auth student.
+      parameters:
+      - description: Only get that fields
+        in: query
+        items:
+          type: string
+        name: fields
+        type: array
       produces:
       - application/json
       responses:

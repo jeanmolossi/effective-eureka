@@ -1,5 +1,7 @@
 package domain
 
+import ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
+
 // Student represents a student in the system.
 type Student interface {
 	// GetStudentID returns the student's ID.
@@ -28,15 +30,9 @@ type RegisterStudent interface {
 	Run(student Student) (Student, error)
 }
 
-// GetMe returns the auth user.
-type GetMe interface {
-	// Run execute get me.
-	Run(studentID string) (Student, error)
-}
-
 type StudentRepository interface {
 	// GetStudentByID returns a student by ID.
-	GetStudentByID(studentID string) (Student, error)
+	GetStudentByID(filters ormcondition.FilterConditions) (Student, error)
 	// GetStudentByEmail returns a student by email.
 	GetStudentByEmail(studentEmail string) (Student, error)
 

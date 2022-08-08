@@ -1168,7 +1168,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
-                        "description": "List not published courses too",
+                        "description": "List not published lessons too",
                         "name": "not_published",
                         "in": "query"
                     },
@@ -1249,6 +1249,17 @@ const docTemplate = `{
                     "students"
                 ],
                 "summary": "Get auth student.",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Only get that fields",
+                        "name": "fields",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

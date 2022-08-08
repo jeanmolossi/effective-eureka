@@ -78,21 +78,31 @@ func (h *Handler) RegisterStudent(c echo.Context) error {
 
 // GetMe returns the auth user.
 //
-// @Summary Get auth student.
-// @Description Get auth student.
-// @Tags students
-// @Accept json
-// @Produce json
-// @Success 200 {object} HttpStudentRegistered
-// @Failure 400 {object} HttpCreateStudentBadRequestErr
-// @Failure 403 {object} HttpStudentForbiddenErr
-// @Failure 500 {object} HttpStudentInternalServerErr
-// @Security access_token
-// @Router /students/me [get]
+// @summary Get auth student.
+// @description Get auth student.
+// @tags students
+// @accept json
+// @produce json
+// @param fields query []string false "Only get that fields"
+// @success 200 {object} HttpStudentRegistered
+// @failure 400 {object} HttpCreateStudentBadRequestErr
+// @failure 403 {object} HttpStudentForbiddenErr
+// @failure 500 {object} HttpStudentInternalServerErr
+// @security access_token
+// @router /students/me [get]
 func (h *Handler) GetMe(c echo.Context) error {
 	log.Println(c.Get("studentID"))
 	studentID := c.Get("studentID").(string)
-	student, err := h.getMe.Run(studentID)
+
+	input := new(domain.GetMeParams)
+	input.StudentID = studentID
+
+	if err := c.Bind(input); err != nil {
+		h.logger.Errorln("error binding student info", err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	student, err := h.getMe.Run(input)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, httputil.HttpUnauthorizedErr{
 			Message: err.Error(),

@@ -1,6 +1,8 @@
 package paginator
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type paginator struct {
 	baseURL      string
@@ -49,7 +51,7 @@ func (p *paginator) GetItemsPerPage() int {
 }
 
 func (p *paginator) ShouldPaginate() bool {
-	return true
+	return p.page > 1 || p.itemsPerPage != 10
 }
 
 func (p *paginator) Paginate(db *gorm.DB) *gorm.DB {
