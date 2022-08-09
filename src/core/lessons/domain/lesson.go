@@ -1,6 +1,14 @@
 package domain
 
-import "time"
+import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/hex"
+	"fmt"
+	"net/url"
+	"strconv"
+	"time"
+)
 
 type lesson struct {
 	sectionID    string
@@ -65,7 +73,11 @@ func (l *lesson) GetVideoPreview() string {
 }
 
 func (l *lesson) GetVideo() string {
-	return l.video
+	if l.video == "" {
+		return ""
+	}
+
+	return fmt.Sprintf("%s?%s", l.video, l.GenerateQueryValidation().Encode())
 }
 
 func (l *lesson) GetIndex() uint16 {
@@ -110,6 +122,44 @@ func (l *lesson) SetVideo(video string) {
 
 func (l *lesson) SetIndex(index uint16) {
 	l.index = index
+}
+
+func (l *lesson) GenerateQueryValidation() url.Values {
+	timestamp := time.Now()
+	expiry := timestamp.Add(time.Minute * 10).Unix()
+	message := fmt.Sprintf("%s:%d:%d", l.lessonID, timestamp.Unix(), expiry)
+
+	hash := hmac.New(sha1.New, []byte("secret"))
+	hash.Write([]byte(message))
+	signature := hex.EncodeToString(hash.Sum(nil))
+
+	return url.Values{
+		"expiry": {fmt.Sprintf("%d", expiry)},
+		"hash":   {signature},
+	}
+}
+
+func (l *lesson) ValidateVideoLink(query url.Values) bool {
+	expiryStr := query.Get("expiry")
+	hashStr := query.Get("hash")
+
+	if expiryStr == "" || hashStr == "" {
+		return false
+	}
+
+	expiryUnix, err := strconv.ParseInt(expiryStr, 10, 64)
+	if err != nil {
+		return false
+	}
+
+	expiry := time.Unix(expiryUnix, 0)
+	timestamp := expiry.Add(time.Minute * -10)
+	message := fmt.Sprintf("%s:%d:%d", l.lessonID, timestamp.Unix(), expiryUnix)
+	hash := hmac.New(sha1.New, []byte("secret"))
+	hash.Write([]byte(message))
+	signature := hex.EncodeToString(hash.Sum(nil))
+
+	return signature == hashStr
 }
 
 func (l *lesson) Publish() {

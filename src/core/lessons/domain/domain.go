@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"net/url"
 	"time"
 
 	ormcondition "github.com/jeanmolossi/effective-eureka/src/pkg/orm_condition"
@@ -27,6 +28,9 @@ type Lesson interface {
 	SetVideoPreview(previewUrl string)
 	SetVideo(video string)
 	SetIndex(index uint16)
+
+	GenerateQueryValidation() url.Values
+	ValidateVideoLink(query url.Values) bool
 
 	Publish()
 	Unpublish()

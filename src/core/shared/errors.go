@@ -67,15 +67,18 @@ func NewBadRequestErr(err error) *BadRequestErr {
 
 func ErrorHandler(c echo.Context, err error) error {
 	var notFoundErr *NotFoundErr
-	var badRequestErr *ValidationErr
+	var validationErr *ValidationErr
 	var unauthorizedErr *UnauthorizedErr
 	var echoBindErr *echo.BindingError
+	var badRequestErr *BadRequestErr
 
 	switch {
-	case errors.As(err, &badRequestErr):
-		return c.JSON(http.StatusBadRequest, badRequestErr)
+	case errors.As(err, &validationErr):
+		return c.JSON(http.StatusBadRequest, validationErr)
 	case errors.As(err, &echoBindErr):
 		return c.JSON(http.StatusBadRequest, echoBindErr)
+	case errors.As(err, &badRequestErr):
+		return c.JSON(http.StatusBadRequest, badRequestErr)
 	case errors.As(err, &notFoundErr):
 		return c.JSON(int(notFoundErr.Code), notFoundErr)
 	case errors.As(err, &unauthorizedErr):
