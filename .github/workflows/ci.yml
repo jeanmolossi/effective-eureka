@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-22.04
 
         steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
 
         - name: e2e-test
           run: make e2e-test
@@ -20,7 +20,7 @@ jobs:
         runs-on: ubuntu-22.04
 
         steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
 
         - name: Set up Go
           uses: actions/setup-go@v3
